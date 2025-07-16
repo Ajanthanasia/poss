@@ -1,3 +1,5 @@
 # POSS system
 ## Billing System
-### Management 
+### start project
+>python -m venv env
+>.\env\Scripts\activate
