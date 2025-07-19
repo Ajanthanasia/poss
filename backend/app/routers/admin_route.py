@@ -1,6 +1,5 @@
-from fastapi import APIRouter
+from fastapi import APIRouter,Request
 from app.controllers import loginController
-from fastapi import Request
 
 router = APIRouter()
 
