@@ -9,5 +9,5 @@ def login():
 
 @router.post("/signup")
 async def signup(req:Request):
-    data=await req.json()
+    data = await req.json()
     return loginController.signupFunc(data)
