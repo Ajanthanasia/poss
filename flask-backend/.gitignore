@@ -1,8 +1,0 @@
-/env
-/venv
-/app/__pycache__
-/app/routers/__pycache__
-/app/controllers/__pycache__
-*.pyc
-__pycache__/
-*.db
