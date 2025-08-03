@@ -23,4 +23,6 @@ def signupFunc():
     new_user.set_password(password)
 
     db.add(new_user)
-    return jsonify({'name':username,'em':email,'password':password})
+    db.commit()
+    db.refresh(new_user)
+    return jsonify({'name':username,'em':email,'password':password,'user':new_user.id})
