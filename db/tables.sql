@@ -1,13 +1,13 @@
 CREATE TABLE
     users (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(100) NOT NULL,
-        email VARCHAR(100) NOT NULL UNIQUE,
-        email_verified_at TIMESTAMP NOT NULL,
-        password VARCHAR(255) NOT NULL,
-        role_id INT (4) NULL DEFAULT NULL,
-        api_token VARCHAR(256) NULL DEFAULT NULL,
-        status_id INT (4) NULL DEFAULT NULL,
+        name VARCHAR(127) NULL DEFAULT NULL,
+        email VARCHAR(127) NOT NULL UNIQUE,
+        email_verified_at TIMESTAMP NULL DEFAULT NULL,
+        password VARCHAR(255) NULL DEFAULT NULL,
+        role_id INT (7) NULL DEFAULT NULL,
+        api_token VARCHAR(257) NULL DEFAULT NULL,
+        status_id INT (7) NULL DEFAULT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     );
@@ -15,8 +15,8 @@ CREATE TABLE
 CREATE TABLE
     roles (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        role VARCHAR(100) NULL DEFAULT NULL,
-        status_id INT (4) NULL DEFAULT NULL,
+        role VARCHAR(127) NULL DEFAULT NULL,
+        status_id INT (7) NULL DEFAULT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     );

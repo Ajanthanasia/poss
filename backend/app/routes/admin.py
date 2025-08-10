@@ -7,22 +7,9 @@ from app.models.user import User
 
 adminRoute = Blueprint('admin', __name__, url_prefix='/api')
 
+from app.controllers.login_controller import register_admin
+
 @adminRoute.route('signup',methods=['post'])
 def signupFunc():
     data = request.get_json()
-    username =data.get('username')
-    email =data.get('email')
-    password =data.get('password')
-
-    db = SessionLocal()
-
-    new_user = User(
-        name=username,
-        email=email,
-    )
-    new_user.set_password(password)
-
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-    return jsonify({'name':username,'em':email,'password':password,'user':new_user.id})
+    return register_admin(data)
