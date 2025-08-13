@@ -7,9 +7,15 @@ from app.models.user import User
 
 adminRoute = Blueprint('admin', __name__, url_prefix='/api')
 
-from app.controllers.login_controller import register_admin
+from app.controllers.login_controller import register_admin, login_user
 
 @adminRoute.route('signup',methods=['post'])
 def signupFunc():
     data = request.get_json()
     return register_admin(data)
+
+@adminRoute.route('login',methods=['post'])
+def login():
+    data = request.get_json()
+    return login_user(data)
+    

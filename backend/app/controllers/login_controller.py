@@ -3,6 +3,7 @@ from app.database import SessionLocal  # your SQLAlchemy session factory
 from app.models.user import User
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.services.jwt import generate_jwt
+from werkzeug.security import check_password_hash
 
 def register_admin(data):
     try:
@@ -46,3 +47,38 @@ def register_admin(data):
             'status':False,
             'message':'Whoops!'
         }) 
+
+def login_user(data):
+    try:
+        email = data.get('email')
+        password = data.get('password')
+        db = SessionLocal()
+        login_user = db.query(User).filter(User.email == email).first()
+        if not login_user:
+            return jsonify({"status": False, "message": "User not found"}), 404
+
+        if check_password_hash(login_user.password, password):
+            apiToken = generate_jwt(login_user.id ,login_user.name)
+            login_user.set_api_token(apiToken)
+            db.commit()
+            userData ={
+                'id': login_user.id,
+                'name': login_user.name
+            }
+            return jsonify({
+                "status": True, 
+                "message": "Login successful",
+                "api_token":apiToken,
+                "data":userData
+            })
+        else:
+            return jsonify({
+                "status": False,
+                "message": "Invalid password"
+            }), 401
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({
+            'status':False,
+            'message':'Whoops!'
+        })
