@@ -16,3 +16,6 @@ class User(db.Model):
 
     def set_password(self, password):
        self.password = password
+    
+    def set_api_token(self, token):
+        self.api_token = token
