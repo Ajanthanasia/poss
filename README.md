@@ -6,4 +6,4 @@
 
 > python -m venv env
 > .\env\Scripts\activate
-> uvicorn app.index:app --reload
+>python main.py
