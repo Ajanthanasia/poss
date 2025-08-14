@@ -3,7 +3,7 @@
 /app/__pycache__
 /app/routers/__pycache__
 /app/controllers/__pycache__
+.env
 *.pyc
 __pycache__/
 *.db
-.env

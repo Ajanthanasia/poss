@@ -3,7 +3,6 @@ from app.database import SessionLocal  # your SQLAlchemy session factory
 from app.models.user import User
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.services.jwt import generate_jwt
-from werkzeug.security import check_password_hash
 
 def register_admin(data):
     try:
