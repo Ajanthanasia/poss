@@ -5,18 +5,37 @@ CREATE TABLE
         email VARCHAR(127) NOT NULL UNIQUE,
         email_verified_at TIMESTAMP NULL DEFAULT NULL,
         password VARCHAR(255) NULL DEFAULT NULL,
-        role_id INT (7) NULL DEFAULT NULL,
+        role_id INT NULL DEFAULT NULL,
         api_token VARCHAR(255) NULL DEFAULT NULL,
-        status_id INT (7) NULL DEFAULT NULL,
+        status_id INT NULL DEFAULT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     );
 
 CREATE TABLE
     roles (
-        id INT (7) NULL DEFAULT NULL,
+        id INT NULL DEFAULT NULL,
         role VARCHAR(127) NULL DEFAULT NULL,
-        status_id INT (7) NULL DEFAULT NULL,
+        status_id INT NULL DEFAULT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     );
+
+CREATE TABLE
+    shops (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        owner_id INT NULL DEFAULT NULL,
+        name VARCHAR(127) NULL DEFAULT NULL,
+        email VARCHAR(127) NULL DEFAULT NULL,
+        token VARCHAR(255) NULL DEFAULT NULL,
+        address VARCHAR(255) NULL DEFAULT NULL,
+        city VARCHAR(255) NULL DEFAULT NULL,
+        district VARCHAR(255) NULL DEFAULT NULL,
+        country VARCHAR(255) NULL DEFAULT NULL,
+        status_id INT NULL DEFAULT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        INDEX idx_owner_id (owner_id),
+        INDEX idx_status_id (status_id),
+        INDEX idx_email (email)
+    )
