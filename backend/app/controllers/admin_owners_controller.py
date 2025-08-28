@@ -44,6 +44,7 @@ def store_new_owner_by_admin(data):
             email=email,
             password=hashed_password,
             role_id = 2,
+            status_id =2,
         )
         db.add(new_user)
         db.commit()

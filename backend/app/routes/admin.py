@@ -9,6 +9,7 @@ adminRoute = Blueprint('admin', __name__, url_prefix='/api')
 
 from app.controllers.login_controller import register_admin, login_user
 from app.controllers.admin_owners_controller import store_new_owner_by_admin, index_owners
+from app.controllers.admin_shops_controller import storeShopByAdmin
 
 @adminRoute.route('signup',methods=['post'])
 def signupFunc():
@@ -29,3 +30,8 @@ def storeOwnerByAdmin():
 def indexOfOwnersList():
     data=request.get_json()
     return index_owners(data)
+
+@adminRoute.route('store-shop',methods=['post'])
+def storeShopByAdminDef():
+    data = request.get_json()
+    return storeShopByAdmin(data)

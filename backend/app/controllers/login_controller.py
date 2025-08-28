@@ -26,6 +26,7 @@ def register_admin(data):
             email=email,
             password=hashed_password,
             role_id = 1,
+            status_id = 2
         )
         db.add(new_user)
         db.commit()
@@ -38,7 +39,6 @@ def register_admin(data):
         return jsonify({
             'status':True,
             'message':'Successfully account registered!',
-            'data':new_user.id
         })
     except Exception as e:
         print(f"Error: {e}")
