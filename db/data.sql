@@ -1,6 +1,6 @@
 INSERT INTO
-    roles (role, status_id)
+    roles (id, role, status_id)
 VALUES
-    ('Admin', 7),
-    ('Owner', 7),
-    ('Counter', 7);
+    (1, 'Admin', 7),
+    (2, 'Owner', 7),
+    (3, 'Counter', 7);
