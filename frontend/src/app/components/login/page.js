@@ -1,5 +1,7 @@
 'use client'
 import React, { useState } from 'react';
+import axios from 'axios';
+// const axios = require("axios");
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
@@ -9,6 +11,14 @@ export default function LoginPage() {
         e.preventDefault()
         console.log(email);
         console.log(password);
+        const res = await axios.post(`http://127.0.0.1:5000/api/login`, {
+            email: email,
+            password: password
+        });
+        console.log(res);
+        console.log(res.data);
+        console.log(res.data.status);
+        console.log(res.data.message);
     };
 
     return (
@@ -63,6 +73,8 @@ export default function LoginPage() {
                                     required
                                     autoComplete="current-password"
                                     className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
                                 />
                             </div>
                         </div>
