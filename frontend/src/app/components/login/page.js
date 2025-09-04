@@ -1,24 +1,42 @@
 'use client'
 import React, { useState } from 'react';
 import axios from 'axios';
-// const axios = require("axios");
 
 export default function LoginPage() {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const loginUrl = 'api/login';
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const handleSubmit = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
         console.log(email);
         console.log(password);
-        const res = await axios.post(`http://127.0.0.1:5000/api/login`, {
-            email: email,
-            password: password
-        });
-        console.log(res);
-        console.log(res.data);
-        console.log(res.data.status);
-        console.log(res.data.message);
+        try {
+            const res = await axios.post(`${apiUrl}${loginUrl}`, {
+                email: email,
+                password: password
+            });
+            if (res.data.status == true) {
+                console.log(res);
+                console.log(res.data);
+                console.log(res.data.status);
+                console.log(res.data.message);
+                localStorage.setItem("token", res.data.api_token);
+                setTimeout(() => {
+                    location.reload();
+                }, 3000);
+            } else {
+                console.log(res);
+            }
+        } catch (err) {
+            console.log(err);
+            console.log(err.response);
+            console.log(err.response.data);
+            console.log(err.response.data.status);
+        } finally {
+            console.log('done');
+        }
     };
 
     return (
