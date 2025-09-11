@@ -22,7 +22,7 @@ export default function Sidebar() {
             <item.icon className="h-5 w-5" />
             <span>{item.name}</span>
           </li>
- ))}
+        ))}
       </ul>
     </div>
   )
