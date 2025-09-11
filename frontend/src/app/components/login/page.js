@@ -16,33 +16,37 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false); // ✅ loading state
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError('');
-        setSuccess('');
-        setLoading(true); // start loading
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+    setLoading(true); // start loading
 
-        try {
-            const res = await axios.post(`${apiUrl}${loginUrl}`, {
-                email,
-                password,
-            });
+    try {
+        const res = await axios.post(`${apiUrl}${loginUrl}`, {
+            email,
+            password,
+        });
 
-            if (res.data.status === true) {
-                localStorage.setItem("token", res.data.api_token);
-                setSuccess(res.data.message || 'Login successful!'); // show only final success
-                setTimeout(() => {
-                    location.reload(); // or redirect to a specific page
-                }, 2000);
-            } else {
-                setError('Invalid email or password.'); // generic error
-            }
-        } catch (err) {
-            console.log(err);
-            setError('Invalid email or password.'); // generic error
-        } finally {
-            setLoading(false); // stop loading
+        if (res.data.status === true) {
+            // ✅ Store both token and user_id
+            localStorage.setItem("token", res.data.api_token);
+            localStorage.setItem("user_id", res.data.data.id);
+
+            setSuccess(res.data.message || 'Login successful!');
+            setTimeout(() => {
+                location.reload(); // or router.push('/admin/dashboard')
+            }, 2000);
+        } else {
+            setError('Invalid email or password.');
         }
-    };
+    } catch (err) {
+        console.log(err);
+        setError('Invalid email or password.');
+    } finally {
+        setLoading(false);
+    }
+};
+
 
     // Auto hide popup after 3 seconds
     useEffect(() => {
