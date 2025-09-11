@@ -41,6 +41,7 @@ CREATE TABLE
         district VARCHAR(255) NULL DEFAULT NULL,
         country VARCHAR(255) NULL DEFAULT NULL,
         status_id INT NULL DEFAULT NULL,
+        creator_id INT NULL DEFAULT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         INDEX idx_owner_id (owner_id),
