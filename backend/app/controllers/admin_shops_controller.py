@@ -10,26 +10,32 @@ def storeShopByAdmin(res):
         ownerId = res.get('owner_id')
         email = res.get('email')
         address = res.get('address')
+        city = res.get('city')
+        district = res.get('district')
+        country = res.get('country')
 
-        db=SessionLocal()
+        db = SessionLocal()
 
         newShop = Shop(
-            owner_id = ownerId,
-            name = name,
-            email =  email,
-            token = str(uuid.uuid4()),
-            address = address,
-            status_id = 2
+            owner_id=ownerId,
+            name=name,
+            email=email,
+            token=str(uuid.uuid4()),
+            address=address,
+            city=city,
+            district=district,
+            country=country,
+            status_id=2
         )
         db.add(newShop)
         db.commit()
         return jsonify({
-            'status':True,
-            'message':'Successfully Added!',
+            'status': True,
+            'message': 'Successfully Added!',
         })
     except Exception as e:
         print(f"Error: {e}")
         return jsonify({
-            'status':False,
-            'message':'Whoops!'
-        }) 
+            'status': False,
+            'message': 'Whoops!'
+        })
