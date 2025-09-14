@@ -1,5 +1,6 @@
 'use client'
 import { HomeIcon, CubeIcon, UserGroupIcon, Cog6ToothIcon, ChartBarIcon, PowerIcon, ShoppingBagIcon, BuildingStorefrontIcon } from '@heroicons/react/24/outline'
+import { useRouter } from "next/navigation";
 
 const menuItems = [
   { name: 'Dashboard', icon: HomeIcon },
@@ -13,6 +14,14 @@ const menuItems = [
 ]
 
 export default function Sidebar() {
+  const router = useRouter();
+
+  console.log('ok-load');
+  const ownersListClick = () => {
+    console.log('ok');
+    router.push('/components/admin/owners');
+  }
+
   return (
     <div className="h-screen w-64 bg-gray-800 text-white flex flex-col p-4">
       <h1 className="text-2xl font-bold mb-8"> Admin</h1>
@@ -24,6 +33,12 @@ export default function Sidebar() {
           </li>
         ))}
       </ul>
+      <div className="space-y-4">
+        <button onClick={ownersListClick} className="flex items-center gap-3 hover:bg-gray-700 p-2 rounded cursor-pointer">
+          <HomeIcon className="h-5 w-5" />
+          <span>Owners</span>
+        </button>
+      </div>
     </div>
   )
 }

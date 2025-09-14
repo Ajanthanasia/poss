@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./components/login/page";
 
 import AdminDashboard from "./components/admin/dashboard/page";
+import OwnersList from "./components/admin/owners/page";
 
 
 export default function Home() {
@@ -22,7 +23,9 @@ export default function Home() {
           {token == null ?
             <Route path="/" element={<LoginPage />}></Route>
             :
-            <Route path="/" element={<AdminDashboard />}></Route>
+            <>
+              <Route path="/" element={<AdminDashboard />}></Route>
+            </>
           }
         </Routes>
       </BrowserRouter>
