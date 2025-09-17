@@ -1,102 +1,92 @@
 'use client'
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import AdminHeader from "../header/page"
-import AdminSidebar from "../sidebar/page"
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import AdminHeader from '../header/page'
+import AdminSidebar from '../sidebar/page'
 
-export default function OwnerAddForm() {
+export default function EditOwnerPage({ owner, onUpdated }) {
   const router = useRouter()
   const apiUrl = process.env.NEXT_PUBLIC_API_URL
 
-  const [ownerName, setOwnerName] = useState("")
-  const [email, setEmail] = useState("")
-  const [contact, setContact] = useState("")
-  const [shopName, setShopName] = useState("")
-  const [shopAddress, setShopAddress] = useState("")
+  const [ownerName, setOwnerName] = useState('')
+  const [email, setEmail] = useState('')
+  const [contact, setContact] = useState('')
+  const [shopName, setShopName] = useState('')
+  const [shopAddress, setShopAddress] = useState('')
 
-  // State for messages
-  const [successMsg, setSuccessMsg] = useState("")
-  const [errorMsg, setErrorMsg] = useState("")
+  const [successMsg, setSuccessMsg] = useState('')
+  const [errorMsg, setErrorMsg] = useState('')
 
-  const handleSubmit = async (e) => {
+  // Load owner data when page loads
+  useEffect(() => {
+    if (!owner) return
+
+    setOwnerName(owner.name || '')
+    setEmail(owner.email || '')
+    setContact(owner.contact || '')
+    setShopName(owner.shops?.[0]?.name || '')
+    setShopAddress(owner.shops?.[0]?.full_address || '')
+    setSuccessMsg('')
+    setErrorMsg('')
+  }, [owner])
+
+  const handleUpdate = async (e) => {
     e.preventDefault()
 
-    // Check all fields
-    if (!ownerName.trim() || !email.trim() || !contact.trim() || !shopName.trim() || !shopAddress.trim()) {
-      setErrorMsg("Please fill all fields.")
+    if (!ownerName || !email || !contact || !shopName || !shopAddress) {
+      setErrorMsg('Please fill all fields.')
+      setSuccessMsg('')
       return
     }
 
     try {
-      const token = localStorage.getItem("token") // JWT from login
-
+      const token = localStorage.getItem('token')
       const res = await fetch(`${apiUrl}/api/store-owner-shop`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json",
-          "Authorization": `Bearer ${token}`
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
+          owner_id: owner.id,
           owner_name: ownerName,
-          contact,
           email,
+          contact,
           shop_name: shopName,
-          shop_address: shopAddress
+          shop_address: shopAddress,
         }),
       })
 
+      const data = await res.json()
       if (res.ok) {
-        setSuccessMsg("Owner and Shop added successfully.")
-        setErrorMsg("")
-
-        // Clear all input fields
-        setOwnerName("")
-        setEmail("")
-        setContact("")
-        setShopName("")
-        setShopAddress("")
+        setSuccessMsg('Owner updated successfully!')
+        setErrorMsg('')
+        onUpdated?.()
       } else {
-        let errMsg = "Something went wrong"
-        try {
-          const err = await res.json()
-          errMsg = err.message || errMsg
-        } catch (parseError) {
-          console.error("Failed to parse error response:", parseError)
-        }
-        setErrorMsg(errMsg)
-        setSuccessMsg("")
+        setErrorMsg(data.message || 'Failed to update owner.')
+        setSuccessMsg('')
       }
-    } catch (error) {
-      console.error(error)
-      setErrorMsg("Something went wrong. Check console for details.")
-      setSuccessMsg("")
+    } catch (err) {
+      console.error(err)
+      setErrorMsg('Something went wrong.')
+      setSuccessMsg('')
     }
   }
 
-  // Auto-hide messages after 3 seconds
-  useEffect(() => {
-    if (successMsg || errorMsg) {
-      const timer = setTimeout(() => {
-        setSuccessMsg("")
-        setErrorMsg("")
-      }, 3000)
-      return () => clearTimeout(timer)
-    }
-  }, [successMsg, errorMsg])
-
   return (
     <div className="flex min-h-screen bg-gray-50 font-sans text-sm">
+      {/* Sidebar */}
       <AdminSidebar />
+
+      {/* Main Content */}
       <div className="flex-1 flex flex-col">
         <AdminHeader />
-        <main className="flex-1 p-6">
-          <div className="max-w-2xl mx-auto bg-white shadow-md rounded-xl p-6 border border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-800 mb-6 text-center">
-              Add New Owner
-            </h2>
 
+        <main className="flex-1 p-6">
+          {/* Form Container */}
+          <div className="max-w-2xl mx-auto bg-white shadow-md rounded-xl p-6 border border-gray-200">
+            
             {/* Messages */}
             {successMsg && (
               <div className="mb-4 p-3 text-center rounded bg-green-500 text-white font-medium">
@@ -109,7 +99,8 @@ export default function OwnerAddForm() {
               </div>
             )}
 
-            <form className="space-y-4" onSubmit={handleSubmit}>
+            {/* Form */}
+            <form className="space-y-4" onSubmit={handleUpdate}>
               {/* Owner Name */}
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">
@@ -182,33 +173,19 @@ export default function OwnerAddForm() {
 
               {/* Buttons */}
               <div className="flex justify-between items-center pt-3">
-                <div className="flex gap-2">
-                  <button
-                    type="reset"
-                    onClick={() => {
-                      setOwnerName("")
-                      setEmail("")
-                      setContact("")
-                      setShopName("")
-                      setShopAddress("")
-                    }}
-                    className="px-4 py-1.5 rounded-md border border-gray-400 text-gray-700 hover:bg-gray-100 transition text-sm"
-                  >
-                    Reset
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-1.5 rounded-md bg-gray-900 text-white hover:bg-gray-700 transition text-sm"
-                  >
-                    Submit
-                  </button>
-                </div>
-             <button
-       type="button"
-     onClick={() => router.push("/components/admin/Owner-list")}
-      className="px-4 py-1.5 rounded-md bg-green-500 hover:bg-green-600 text-white font-bold transition text-sm">
-     View Owner List
-    </button>
+                <button
+                  type="button"
+                  onClick={() => router.push('/components/admin/Owner-list')}
+                  className="px-4 py-1.5 rounded-md border border-gray-400 text-gray-700 hover:bg-gray-100 transition text-sm"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-1.5 rounded-md bg-gray-900 text-white hover:bg-gray-700 transition text-sm"
+                >
+                  Update
+                </button>
               </div>
             </form>
           </div>

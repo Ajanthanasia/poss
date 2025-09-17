@@ -20,12 +20,23 @@ def register():
 
     try:
         user = create_user(name, email, password)
+
+        # ✅ Create access token immediately after registration
+        access_token = create_access_token(identity=str(user.id))
+
         return jsonify({
             "message": "User created",
-            "user": {"id": user.id, "name": user.name, "email": user.email}
+            "access_token": access_token,
+            "user": {
+                "id": user.id,
+                "name": user.name,
+                "email": user.email
+            }
         }), 201
+
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
+
 
 # -------- LOGIN --------
 @auth_bp.route('/login', methods=['POST'])
@@ -34,15 +45,23 @@ def login():
     if not data:
         return jsonify({"error": "Missing JSON body"}), 400
 
-    name = data.get('name')   # <-- change from username
+    name = data.get('name')
     password = data.get('password')
 
     if not name or not password:
         return jsonify({"error": "Name and password are required"}), 400
 
-    user = authenticate_user(name, password)  # <-- change from username
+    user = authenticate_user(name, password)
     if user:
-        access_token = create_access_token(identity=user.id)
-        return jsonify({"access_token": access_token}), 200
+        access_token = create_access_token(identity=str(user.id))  # ✅ fixed
+        return jsonify({
+            "message": "Login successful",
+            "access_token": access_token,
+            "user": {
+                "id": user.id,
+                "name": user.name,
+                "email": user.email
+            }
+        }), 200
 
     return jsonify({"error": "Invalid credentials"}), 401
