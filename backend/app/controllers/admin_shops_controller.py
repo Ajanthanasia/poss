@@ -1,23 +1,25 @@
-from flask import Blueprint, request, jsonify
-from app.database import SessionLocal  # your SQLAlchemy session factory
+from flask import jsonify
+from app.database import SessionLocal
 import uuid
-from app.models.user import User
 from app.models.shop import Shop
 
-def storeShopByAdmin(res):
+def storeShopByAdmin(data):
+    db = SessionLocal()
     try:
-        name = res.get('name')
-        ownerId = res.get('owner_id')
-        email = res.get('email')
-        address = res.get('address')
-        city = res.get('city')
-        district = res.get('district')
-        country = res.get('country')
+        name = data.get('name')
+        owner_id = data.get('owner_id')
+        email = data.get('email')
+        address = data.get('address')
+        city = data.get('city')
+        district = data.get('district')
+        country = data.get('country')
 
-        db = SessionLocal()
+        # Validate required fields
+        if not all([name, owner_id, email, address]):
+            return jsonify({'status': False, 'message': 'Missing required fields'}), 400
 
-        newShop = Shop(
-            owner_id=ownerId,
+        new_shop = Shop(
+            owner_id=owner_id,
             name=name,
             email=email,
             token=str(uuid.uuid4()),
@@ -27,15 +29,21 @@ def storeShopByAdmin(res):
             country=country,
             status_id=2
         )
-        db.add(newShop)
+
+        db.add(new_shop)
         db.commit()
+        db.refresh(new_shop)  # to get the ID
+
         return jsonify({
             'status': True,
-            'message': 'Successfully Added!',
-        })
+            'message': 'Shop added successfully!',
+            'shop_id': new_shop.id
+        }), 201
+
     except Exception as e:
-        print(f"Error: {e}")
-        return jsonify({
-            'status': False,
-            'message': 'Whoops!'
-        })
+        db.rollback()
+        print(f"Error in storeShopByAdmin: {e}")
+        return jsonify({'status': False, 'message': 'Whoops! Something went wrong'}), 500
+
+    finally:
+        db.close()

@@ -27,18 +27,20 @@ export default function LoginPage() {
             password,
         });
 
-        if (res.data.status === true) {
-            // ✅ Store both token and user_id
-            localStorage.setItem("token", res.data.api_token);
-            localStorage.setItem("user_id", res.data.data.id);
+if (res.data.status === true) {
+    // ✅ Store both token and user_id
+    localStorage.setItem("token", res.data.access_token);
+    localStorage.setItem("user_id", res.data.data.id);
 
-            setSuccess(res.data.message || 'Login successful!');
-            setTimeout(() => {
-                location.reload(); // or router.push('/admin/dashboard')
-            }, 2000);
-        } else {
-            setError('Invalid email or password.');
-        }
+    setSuccess(res.data.message || 'Login successful!');
+    setTimeout(() => {
+        router.push("/components/admin/owners"); // navigate after login
+    }, 1000);
+} else {
+    setError(res.data.message || 'Invalid email or password.');
+}
+
+
     } catch (err) {
         console.log(err);
         setError('Invalid email or password.');
