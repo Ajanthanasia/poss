@@ -38,6 +38,16 @@ export default function Sidebar() {
           </li>
         ))}
       </ul>
+      <div className="space-y-4">
+        <button onClick={ownersListClick} className="flex items-center gap-3 hover:bg-gray-700 p-2 rounded cursor-pointer">
+          <HomeIcon className="h-5 w-5" />
+          <span>Owners</span>
+        </button>
+        <button onClick={() => router.push('/components/admin/shops/index')} className="flex items-center gap-3 hover:bg-gray-700 p-2 rounded cursor-pointer">
+          <BuildingStorefrontIcon className="h-5 w-5" />
+          <span>Shops</span>
+        </button>
+      </div>
     </div>
   )
 }
