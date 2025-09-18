@@ -1,17 +1,9 @@
 'use client'
-import { HomeIcon, CubeIcon, UserGroupIcon, Cog6ToothIcon, ChartBarIcon, PowerIcon, ShoppingBagIcon, BuildingStorefrontIcon } from '@heroicons/react/24/outline'
+import { HomeIcon, BuildingStorefrontIcon } from '@heroicons/react/24/outline'
 import { useRouter } from "next/navigation";
 
-const menuItems = [
-  { name: 'Dashboard', icon: HomeIcon },
-  { name: 'Products', icon: CubeIcon },
-  { name: 'Orders', icon: ShoppingBagIcon },
-  { name: 'Owners', icon: UserGroupIcon },
-  { name: 'Shops', icon: BuildingStorefrontIcon },
-  { name: 'Reports', icon: ChartBarIcon },
-  { name: 'Settings', icon: Cog6ToothIcon },
-  { name: 'Logout', icon: PowerIcon },
-]
+// menuItems removed (no Owners + Shops here)
+const menuItems = []
 
 export default function Sidebar() {
   const router = useRouter();
