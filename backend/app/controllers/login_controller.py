@@ -1,83 +1,112 @@
-from flask import Blueprint, request, jsonify
-from app.database import SessionLocal  # your SQLAlchemy session factory
+from flask import jsonify
+from app.database import SessionLocal
 from app.models.user import User
 from werkzeug.security import generate_password_hash, check_password_hash
-from app.services.jwt import generate_jwt
+from flask_jwt_extended import create_access_token
 
+# -------------------------------
+# Register Admin
+# -------------------------------
 def register_admin(data):
+    db = None
     try:
-        username = data.get('username')
+        # Extract input
+        name = data.get('name')
         email = data.get('email')
         password = data.get('password')
 
-        db = SessionLocal()
+        if not name or not email or not password:
+            return jsonify({'status': False, 'message': 'Name, email, and password are required'}), 400
 
+        db = SessionLocal()  # manual session
+
+        # Check for existing email
         existing_user = db.query(User).filter(User.email == email).first()
-        if(existing_user):
-            return jsonify({
-                'status':False,
-                'message':'Email already used by someone'
-            })
-        
+        if existing_user:
+            return jsonify({'status': False, 'message': 'Email already used'}), 400
+
+        # Hash password
         hashed_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=16)
 
+        # Create new admin
         new_user = User(
-            name=username,
+            name=name,
             email=email,
             password=hashed_password,
-            role_id = 1,
-            status_id = 2
+            role_id=1,   # Admin role
+            status_id=2  # Active / Pending
         )
         db.add(new_user)
         db.commit()
         db.refresh(new_user)
 
-        apiToken = generate_jwt(new_user.id ,username)
-        new_user.set_api_token(apiToken)
-        db.commit()
-        
-        return jsonify({
-            'status':True,
-            'message':'Successfully account registered!',
-        })
-    except Exception as e:
-        print(f"Error: {e}")
-        return jsonify({
-            'status':False,
-            'message':'Whoops!'
-        }) 
+        # Create JWT token with string identity
+        access_token = create_access_token(identity=str(new_user.id))
 
+        return jsonify({
+            'status': True,
+            'message': 'Successfully registered!',
+            'access_token': access_token,
+            'user': {
+                'id': new_user.id,
+                'name': new_user.name,
+                'email': new_user.email
+            }
+        }), 201
+
+    except Exception as e:
+        if db:
+            db.rollback()
+        print(f"❌ register_admin error: {e}")
+        return jsonify({'status': False, 'message': 'Something went wrong'}), 500
+
+    finally:
+        if db:
+            db.close()
+
+
+# -------------------------------
+# Login Admin
+# -------------------------------
 def login_user(data):
+    db = None
     try:
+        # Extract input
         email = data.get('email')
         password = data.get('password')
-        db = SessionLocal()
-        login_user = db.query(User).filter(User.email == email).first()
-        if not login_user:
-            return jsonify({"status": False, "message": "User not found"}), 404
 
-        if check_password_hash(login_user.password, password):
-            apiToken = generate_jwt(login_user.id ,login_user.name)
-            login_user.set_api_token(apiToken)
-            db.commit()
-            userData ={
-                'id': login_user.id,
-                'name': login_user.name
-            }
-            return jsonify({
-                "status": True, 
-                "message": "Login successful",
-                "api_token":apiToken,
-                "data":userData
-            })
-        else:
-            return jsonify({
-                "status": False,
-                "message": "Invalid password"
-            }), 401
-    except Exception as e:
-        print(f"Error: {e}")
+        if not email or not password:
+            return jsonify({'status': False, 'message': 'Email and password required'}), 400
+
+        db = SessionLocal()  # manual session
+
+        # Find user
+        user = db.query(User).filter(User.email == email).first()
+        if not user:
+            return jsonify({'status': False, 'message': 'User not found'}), 404
+
+        # Check password
+        if not check_password_hash(user.password, password):
+            return jsonify({'status': False, 'message': 'Invalid password'}), 401
+
+        # Create JWT token
+        access_token = create_access_token(identity=str(user.id))
+
         return jsonify({
-            'status':False,
-            'message':'Whoops!'
-        })
+            'status': True,
+            'message': 'Login successful',
+            'access_token': access_token,
+            'data': {
+                'id': user.id,
+                'name': user.name,
+                'email': user.email
+            }
+        }), 200
+
+    except Exception as e:
+        print(f"❌ login_user error: {e}")
+        return jsonify({'status': False, 'message': 'Something went wrong'}), 500
+
+    finally:
+        if db:
+            db.close()
