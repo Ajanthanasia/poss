@@ -22,6 +22,19 @@ CREATE TABLE
     );
 
 CREATE TABLE
+    user_profiles (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NULL DEFAULT NULL,
+        country_code VARCHAR(8) NULL DEFAULT NULL,
+        mobile VARCHAR(8) NULL DEFAULT NULL,
+        status_id INT NULL DEFAULT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    );
+
+
+
+CREATE TABLE
     statuses (
         id INT NULL DEFAULT NULL,
         name VARCHAR(127) NULL DEFAULT NULL,
