@@ -113,7 +113,7 @@ def store_new_owner_by_admin(data):
         new_owner = User(
             name=name,
             email=email,
-            contact=contact,
+            # contact=contact,
             password=hashed_password,
             role_id=2,    # Owner role
             status_id=2   # Active / Pending
@@ -129,7 +129,7 @@ def store_new_owner_by_admin(data):
                 'owner_id': new_owner.id,
                 'name': new_owner.name,
                 'email': new_owner.email,
-                'contact': new_owner.contact
+                # 'contact': new_owner.contact
             }
         }), 201
 
