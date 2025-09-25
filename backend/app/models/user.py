@@ -16,5 +16,13 @@ class User(Base):
     status_id = Column(Integer, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
-    profile = relationship('UserProfile', back_populates='user', uselist=False)
-    shops = relationship('Shop', back_populates='owner')
+    profile = relationship(
+    'UserProfile',
+    back_populates='user',
+    uselist=False,
+    cascade="all, delete-orphan",
+    passive_deletes=True  # <--- ADD THIS
+)
+
+    shops = relationship('Shop', back_populates='owner', cascade="all, delete-orphan")
+

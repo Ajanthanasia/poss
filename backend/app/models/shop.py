@@ -8,7 +8,7 @@ class Shop(Base):
     __tablename__ = 'shops'
 
     id = Column(Integer, primary_key=True)
-    owner_id = Column(Integer, ForeignKey('users.id'), nullable=True)
+    owner_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     name = Column(String(127), nullable=True)
     email = Column(String(127), nullable=True)
     token = Column(String(255), unique=True, nullable=False)
