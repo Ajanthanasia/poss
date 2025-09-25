@@ -1,7 +1,6 @@
 from flask import jsonify
 from app.database import SessionLocal
-from app.models.user import User
-from app.models.shop import Shop
+from app.models import User, UserProfile, Shop
 from werkzeug.security import generate_password_hash
 from collections import OrderedDict
 
@@ -34,7 +33,7 @@ def index_owners():
                     'id': u.id,
                     'name': u.name,
                     'email': u.email,
-                    'contact': getattr(u, 'contact', ''),
+                    'contact': u.profile.contact if u.profile else '', 
                     'shops': shops_list
                 })
 
@@ -74,7 +73,7 @@ def get_owner(owner_id):
                 'id': owner.id,
                 'name': owner.name,
                 'email': owner.email,
-                'contact': getattr(owner, 'contact', ''),
+                'contact': owner.profile.contact if owner.profile else '',
                 'shops': shops_list
             }
 

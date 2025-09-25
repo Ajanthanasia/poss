@@ -4,6 +4,8 @@ from app.models.user import User
 from app.models.shop import Shop
 from werkzeug.security import generate_password_hash
 import uuid
+import traceback
+from app.models.user_profile import UserProfile  # import your model
 def store_owner_and_shop(data, admin_id):
     db = SessionLocal()
     try:
@@ -18,24 +20,34 @@ def store_owner_and_shop(data, admin_id):
         # Check if owner exists
         owner = db.query(User).filter(User.id == data.get('owner_id')).first()
         if owner:
-            # Update existing owner info
             owner.name = owner_name
             owner.email = email
-            owner.contact = contact
         else:
-            # Create new owner
             owner = User(
                 name=owner_name,
                 email=email,
-                contact=contact,
                 password=generate_password_hash(password),
                 role_id=2,
                 status_id=2
             )
             db.add(owner)
-            db.flush()  # Get owner.id before commit
+            db.flush()  # to get owner.id before profile/shop insert
 
-        # Check if shop exists for this owner
+        # Handle contact via UserProfile
+        profile = db.query(UserProfile).filter(UserProfile.user_id == owner.id).first()
+        if profile:
+            profile.contact = contact
+            profile.country_code = data.get('country_code', '+94')
+        else:
+            profile = UserProfile(
+                user_id=owner.id,
+                contact=contact,
+                country_code=data.get('country_code', '+94'),
+                status_id=2
+            )
+            db.add(profile)
+
+        # Handle shop as before
         shop = db.query(Shop).filter(Shop.owner_id == owner.id).first()
         if shop:
             shop.name = data.get('shop_name')
@@ -63,8 +75,10 @@ def store_owner_and_shop(data, admin_id):
             'shop_id': shop.id
         }), 200
 
-    except Exception as e:
+    except Exception as e:  # ← correct indentation
         db.rollback()
+        traceback.print_exc()   # prints full error to console
         return jsonify({'status': False, 'message': str(e)}), 500
-    finally:
+
+    finally:  # ← correct indentation
         db.close()
