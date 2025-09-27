@@ -1,13 +1,9 @@
 from flask import jsonify
 from app.database import SessionLocal
-from app.models.user import User
-from app.models.shop import Shop
+from app.models import User, UserProfile, Shop
 from werkzeug.security import generate_password_hash
 from collections import OrderedDict
 
-# --------------------------
-# List all owners with shops
-# --------------------------
 def index_owners():
     try:
         with SessionLocal() as db:  # ✅ auto close
@@ -34,7 +30,7 @@ def index_owners():
                     'id': u.id,
                     'name': u.name,
                     'email': u.email,
-                    'contact': getattr(u, 'contact', ''),
+                    'contact': u.profile.contact if u.profile else '', 
                     'shops': shops_list
                 })
 
@@ -74,7 +70,7 @@ def get_owner(owner_id):
                 'id': owner.id,
                 'name': owner.name,
                 'email': owner.email,
-                'contact': getattr(owner, 'contact', ''),
+                'contact': owner.profile.contact if owner.profile else '',
                 'shops': shops_list
             }
 
@@ -140,27 +136,21 @@ def store_new_owner_by_admin(data):
         return jsonify({'status': False, 'message': 'Something went wrong'}), 500
 
 def delete_owner(owner_id):
-    db = None
+    db = SessionLocal()
     try:
-        db = SessionLocal()
         owner = db.query(User).filter(User.id == owner_id, User.role_id == 2).first()
         if not owner:
             return jsonify({'status': False, 'message': 'Owner not found'}), 404
 
-        # Optionally, delete related shops first
-        db.query(Shop).filter(Shop.owner_id == owner.id).delete()
         db.delete(owner)
         db.commit()
-
         return jsonify({'status': True, 'message': 'Owner deleted successfully'}), 200
 
     except Exception as e:
-        if db:
-            db.rollback()
-        print(f"❌ Error deleting owner: {e}")
-        return jsonify({'status': False, 'message': 'Something went wrong'}), 500
-
+        db.rollback()
+        import traceback
+        traceback.print_exc()
+        return jsonify({'status': False, 'message': repr(e)}), 500
 
     finally:
-        if db:
-            db.close()
+        db.close()
