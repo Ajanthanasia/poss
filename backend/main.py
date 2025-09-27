@@ -17,4 +17,4 @@ def test_db():
         return str(e)
 
 if __name__ == '__main__':
-    app.run(debug=True)flask db upgrade
+    app.run(debug=True)
