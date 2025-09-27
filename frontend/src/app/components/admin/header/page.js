@@ -9,7 +9,7 @@ export default function AdminHeader() {
     const logout = async () => {
         localStorage.clear();
         console.log('Logout Success');
-        location.reload();
+        router.push('/components/login'); // Directly push the route
     }
 
     // Navigate to Profile page
@@ -34,10 +34,10 @@ export default function AdminHeader() {
 
                 {/* Mobile menu button */}
                 <div className="flex lg:hidden">
-                    <button 
-                        type="button" 
-                        command="show-modal" 
-                        commandfor="mobile-menu" 
+                    <button
+                        type="button"
+                        command="show-modal"
+                        commandfor="mobile-menu"
                         className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-400 hover:text-indigo-400 focus:text-indigo-400 transition"
                     >
                         <span className="sr-only">Open main menu</span>
