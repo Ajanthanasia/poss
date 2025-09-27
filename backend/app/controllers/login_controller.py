@@ -3,6 +3,7 @@ from app.database import SessionLocal
 from app.models.user import User
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token
+from app.services.jwt import generate_jwt
 
 # -------------------------------
 # Register Admin
@@ -90,7 +91,9 @@ def login_user(data):
             return jsonify({'status': False, 'message': 'Invalid password'}), 401
 
         # Create JWT token
-        access_token = create_access_token(identity=str(user.id))
+        access_token = generate_jwt(user.id, user.name)
+        user.api_token = access_token
+        db.commit()
 
         return jsonify({
             'status': True,
