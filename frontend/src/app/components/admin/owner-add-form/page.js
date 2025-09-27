@@ -16,6 +16,9 @@ export default function OwnerAddForm() {
     const [countryCode, setCountryCode] = useState("+94") // default country code
     const [shopName, setShopName] = useState("")
     const [shopAddress, setShopAddress] = useState("")
+    const [shopCity, setShopCity] = useState("")
+    const [shopDistrict, setShopDistrict] = useState("")
+    const [shopCountry, setShopCountry] = useState("")
     const [successMsg, setSuccessMsg] = useState("")
     const [errorMsg, setErrorMsg] = useState("")
 
@@ -24,7 +27,7 @@ export default function OwnerAddForm() {
         e.preventDefault()
 
         if (!ownerName.trim() || !email.trim() || !contact.trim() || !shopName.trim() || !shopAddress.trim()) {
-            setErrorMsg("Please fill all fields.")
+            setErrorMsg("Please fill all required fields.")
             return
         }
 
@@ -41,21 +44,28 @@ export default function OwnerAddForm() {
                     owner_name: ownerName,
                     email,
                     contact,
-                    country_code: countryCode, // ✅ sent separately
+                    country_code: countryCode,
                     shop_name: shopName,
-                    shop_address: shopAddress
+                    shop_address: shopAddress,
+                    city: shopCity,
+                    district: shopDistrict,
+                    country: shopCountry
                 }),
             })
 
             if (res.ok) {
                 setSuccessMsg("Owner and Shop added successfully.")
                 setErrorMsg("")
+                // Reset form
                 setOwnerName("")
                 setEmail("")
                 setContact("")
                 setCountryCode("+94")
                 setShopName("")
                 setShopAddress("")
+                setShopCity("")
+                setShopDistrict("")
+                setShopCountry("")
             } else {
                 let errMsg = "Something went wrong"
                 try {
@@ -123,7 +133,7 @@ export default function OwnerAddForm() {
                                 />
                             </div>
 
-                            {/* Email + (Country Code | Contact) */}
+                            {/* Email + Phone */}
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                 {/* Email */}
                                 <div>
@@ -194,6 +204,48 @@ export default function OwnerAddForm() {
                                 />
                             </div>
 
+                            {/* City, District, Country */}
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-600 mb-1">
+                                        City
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={shopCity}
+                                        onChange={(e) => setShopCity(e.target.value)}
+                                        placeholder="Enter city"
+                                        className="w-full border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-gray-800 text-sm"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-600 mb-1">
+                                        District
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={shopDistrict}
+                                        onChange={(e) => setShopDistrict(e.target.value)}
+                                        placeholder="Enter district"
+                                        className="w-full border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-gray-800 text-sm"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-600 mb-1">
+                                        Country
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={shopCountry}
+                                        onChange={(e) => setShopCountry(e.target.value)}
+                                        placeholder="Enter country"
+                                        className="w-full border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-gray-800 text-sm"
+                                    />
+                                </div>
+                            </div>
+
                             {/* Action Buttons */}
                             <div className="flex justify-between items-center pt-3">
                                 <div className="flex gap-2">
@@ -206,6 +258,9 @@ export default function OwnerAddForm() {
                                             setCountryCode("+94")
                                             setShopName("")
                                             setShopAddress("")
+                                            setShopCity("")
+                                            setShopDistrict("")
+                                            setShopCountry("")
                                         }}
                                         className="px-4 py-1.5 rounded-md border border-gray-400 text-gray-700 hover:bg-gray-100 transition text-sm"
                                     >

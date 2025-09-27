@@ -8,26 +8,39 @@ import { HiArrowLeft } from 'react-icons/hi';
 
 export default function ProfileForm() {
     const router = useRouter();
+    const [mounted, setMounted] = useState(false);
 
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
-    const [userId, setUserId] = useState(null);
-    const [userEmail, setUserEmail] = useState('');
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
+    // Fetch profile from backend
     useEffect(() => {
-        const storedUserId = localStorage.getItem('user_id');
-        const storedUserEmail = localStorage.getItem('user_email');
-        if (storedUserId) setUserId(storedUserId);
-        if (storedUserEmail) {
-            setUserEmail(storedUserEmail);
-            setEmail(storedUserEmail); // pre-fill email
-        }
+        setMounted(true);
+
+        const fetchProfile = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const res = await axios.get(`${apiUrl}/api/profile`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                if (res.data.success) {
+                    setName(res.data.name);
+                    setEmail(res.data.email);
+                }
+            } catch (err) {
+                console.error("Error fetching profile:", err);
+            }
+        };
+
+        fetchProfile();
     }, []);
 
     const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -37,7 +50,7 @@ export default function ProfileForm() {
         setMessage('');
         setError('');
 
-        if (!email || !currentPassword || !newPassword || !confirmPassword) {
+        if (!name || !email || !currentPassword || !newPassword || !confirmPassword) {
             setError("Please fill in all the fields.");
             return;
         }
@@ -52,52 +65,34 @@ export default function ProfileForm() {
             return;
         }
 
-        if (!userId) {
-            setError("User not found. Please login again.");
-            return;
-        }
-
         try {
             const token = localStorage.getItem('token');
 
             const res = await axios.post(
                 `${apiUrl}/api/profile/update`,
                 {
-                    user_id: userId,
+                    name,
                     email,
                     currentPassword,
                     newPassword,
                 },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
+                { headers: { Authorization: `Bearer ${token}` } }
             );
 
             if (res.data.success) {
                 setMessage(res.data.message);
-                setEmail(userEmail); // reset to current email
                 setCurrentPassword('');
                 setNewPassword('');
                 setConfirmPassword('');
             } else {
-                if (res.data.message?.toLowerCase().includes("current password")) {
-                    setError("Oops! Your current password is incorrect.");
-                } else if (res.data.message?.toLowerCase().includes("email")) {
-                    setError("The email you entered is invalid or already in use.");
-                } else {
-                    setError(res.data.message || "Something went wrong.");
-                }
+                setError(res.data.message || "Something went wrong.");
             }
-
         } catch (err) {
             console.error(err);
             setError(err.response?.data?.message || "Server error. Please try again later.");
         }
     };
 
-    // Auto hide popup after 3 seconds
     useEffect(() => {
         if (error || message) {
             const timer = setTimeout(() => {
@@ -108,6 +103,8 @@ export default function ProfileForm() {
         }
     }, [error, message]);
 
+    if (!mounted) return null;
+
     return (
         <AdminLayout>
             <div className="min-h-screen bg-gray-900 flex items-center justify-center">
@@ -116,11 +113,9 @@ export default function ProfileForm() {
                     <div
                         className="absolute top-4 left-4 cursor-pointer text-white hover:text-indigo-400"
                         onClick={() => router.back()}
-
                     >
                         <HiArrowLeft size={24} />
                     </div>
-
 
                     {/* Avatar */}
                     <div className="flex justify-center -mt-4">
@@ -148,18 +143,31 @@ export default function ProfileForm() {
 
                     {/* Form */}
                     <form onSubmit={handleSubmit} className="flex flex-col justify-between h-full space-y-3">
+                        {/* Name */}
+                        <div className="flex flex-col">
+                            <label className="text-sm font-medium text-gray-100 mb-1">Name</label>
+                            <input
+                                type="text"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                placeholder="Enter your name"
+                                className="p-2 rounded-md bg-white/5 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition text-sm"
+                            />
+                        </div>
 
+                        {/* Email */}
                         <div className="flex flex-col">
                             <label className="text-sm font-medium text-gray-100 mb-1">Email</label>
                             <input
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                placeholder="Enter your current email"
+                                placeholder="Enter your email"
                                 className="p-2 rounded-md bg-white/5 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition text-sm"
                             />
                         </div>
 
+                        {/* Current Password */}
                         <div className="flex flex-col">
                             <label className="text-sm font-medium text-gray-100 mb-1">Current Password</label>
                             <input
@@ -171,6 +179,7 @@ export default function ProfileForm() {
                             />
                         </div>
 
+                        {/* New Password */}
                         <div className="flex flex-col">
                             <label className="text-sm font-medium text-gray-100 mb-1">New Password</label>
                             <input
@@ -182,6 +191,7 @@ export default function ProfileForm() {
                             />
                         </div>
 
+                        {/* Confirm Password */}
                         <div className="flex flex-col">
                             <label className="text-sm font-medium text-gray-100 mb-1">Confirm New Password</label>
                             <input
