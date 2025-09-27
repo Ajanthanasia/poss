@@ -10,9 +10,9 @@ export default function Sidebar() {
 
   const handleMenuClick = (name) => {
     if (name === 'Owners') {
-      router.push('/components/admin/owners');
+      router.push('components/admin/owners');
     } else if (name === 'Shops') {
-      router.push('/components/admin/shops/index');
+      router.push('components/admin/shops/index');
     }
     // Add other navigation logic here if needed
   }
@@ -33,7 +33,7 @@ export default function Sidebar() {
         ))}
       </ul>
       <div className="space-y-4">
-        <button onClick={() => router.push('components/admin/owners')} className="flex items-center gap-3 hover:bg-gray-700 p-2 rounded cursor-pointer">
+        <button onClick={() => router.push('/components/admin/owners')} className="flex items-center gap-3 hover:bg-gray-700 p-2 rounded cursor-pointer">
           <HomeIcon className="h-5 w-5" />
           <span>Owners</span>
         </button>
