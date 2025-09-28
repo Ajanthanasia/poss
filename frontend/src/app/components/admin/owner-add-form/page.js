@@ -129,7 +129,7 @@ export default function OwnerAddForm() {
                                     value={ownerName}
                                     onChange={(e) => setOwnerName(e.target.value)}
                                     placeholder="Enter owner name"
-                                    className="w-full border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-gray-800 text-sm"
+                                    className="w-full border text-black border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-gray-800 text-sm"
                                 />
                             </div>
 
@@ -145,7 +145,7 @@ export default function OwnerAddForm() {
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         placeholder="Enter email"
-                                        className="w-full border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-gray-800 text-sm"
+                                        className="w-full border border-gray-300 text-black rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-gray-800 text-sm"
                                     />
                                 </div>
 
@@ -170,7 +170,7 @@ export default function OwnerAddForm() {
                                             value={contact}
                                             onChange={(e) => setContact(e.target.value)}
                                             placeholder="Contact number"
-                                            className="flex-1 border border-gray-300 rounded-r-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-gray-800 text-sm"
+                                            className="flex-1 border border-gray-300 text-black rounded-r-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-gray-800 text-sm"
                                         />
                                     </div>
                                 </div>
@@ -186,7 +186,7 @@ export default function OwnerAddForm() {
                                     value={shopName}
                                     onChange={(e) => setShopName(e.target.value)}
                                     placeholder="Enter shop name"
-                                    className="w-full border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-gray-800 text-sm"
+                                    className="w-full border border-gray-300 text-black rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-gray-800 text-sm"
                                 />
                             </div>
 
@@ -200,7 +200,7 @@ export default function OwnerAddForm() {
                                     value={shopAddress}
                                     onChange={(e) => setShopAddress(e.target.value)}
                                     placeholder="Enter shop address"
-                                    className="w-full border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-gray-800 text-sm"
+                                    className="w-full border border-gray-300 text-black rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-gray-800 text-sm"
                                 />
                             </div>
 
@@ -215,7 +215,7 @@ export default function OwnerAddForm() {
                                         value={shopCity}
                                         onChange={(e) => setShopCity(e.target.value)}
                                         placeholder="Enter city"
-                                        className="w-full border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-gray-800 text-sm"
+                                        className="w-full border border-gray-300 text-black rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-gray-800 text-sm"
                                     />
                                 </div>
 
@@ -228,7 +228,7 @@ export default function OwnerAddForm() {
                                         value={shopDistrict}
                                         onChange={(e) => setShopDistrict(e.target.value)}
                                         placeholder="Enter district"
-                                        className="w-full border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-gray-800 text-sm"
+                                        className="w-full border border-gray-300 text-black rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-gray-800 text-sm"
                                     />
                                 </div>
 
@@ -241,7 +241,7 @@ export default function OwnerAddForm() {
                                         value={shopCountry}
                                         onChange={(e) => setShopCountry(e.target.value)}
                                         placeholder="Enter country"
-                                        className="w-full border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-gray-800 text-sm"
+                                        className="w-full border border-gray-300 text-black rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-gray-800 text-sm"
                                     />
                                 </div>
                             </div>
