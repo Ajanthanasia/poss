@@ -13,6 +13,7 @@
   --font-mono: monospace;
 }
 
+
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
   :root {
