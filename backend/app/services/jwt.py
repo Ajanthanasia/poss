@@ -3,20 +3,21 @@ import jwt
 import datetime
 from dotenv import load_dotenv
 
-def generate_jwt(userId,username):
+def generate_jwt(userId, username):
     try:
-        # Your secret key (keep it safe!)
+        # Load secret key
         JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 
         # Create token payload
         payload = {
-            "user_id": userId,
+            "sub": str(userId),  # convert to string
             "username": username,
-            "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=24)  # Expiration time
+            "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=24)
         }
 
         # Generate token
         token = jwt.encode(payload, JWT_SECRET_KEY, algorithm="HS256")
         return token
-    except SomeException as e:
-        print(f"Error: {e}")
+    except Exception as e:
+        print(f"Error generating JWT: {e}")
+        return None

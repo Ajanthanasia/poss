@@ -1,28 +1,23 @@
-# app/models/user.py
-from sqlalchemy import Column, Integer, String, DateTime
-from sqlalchemy.orm import relationship
-from datetime import datetime
-from app.database import Base
+from app import db
 
-class User(Base):
+class User(db.Model):
     __tablename__ = 'users'
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String(50), unique=True, nullable=False)
-    email = Column(String(120), unique=True, nullable=False)
-    password = Column(String(255), nullable=False)
-    role_id = Column(Integer, nullable=True)
-    api_token = Column(String(255), nullable=True)
-    status_id = Column(Integer, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(255), nullable=False)
+    role_id = db.Column(db.Integer)
+    api_token = db.Column(db.String(255))
+    status_id = db.Column(db.Integer)
+    created_at = db.Column(db.DateTime, default=db.func.now())
 
-    profile = relationship(
-    'UserProfile',
-    back_populates='user',
-    uselist=False,
-    cascade="all, delete-orphan",
-    passive_deletes=True  # <--- ADD THIS
-)
+    profile = db.relationship(
+        'UserProfile',
+        back_populates='user',
+        uselist=False,
+        cascade="all, delete-orphan",
+        passive_deletes=True
+    )
 
-    shops = relationship('Shop', back_populates='owner', cascade="all, delete-orphan")
-
+    shops = db.relationship('Shop', back_populates='owner', cascade="all, delete-orphan")
