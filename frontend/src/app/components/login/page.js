@@ -16,38 +16,45 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false); // ✅ loading state
 
     const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
-    setLoading(true); // start loading
+        e.preventDefault();
+        setError('');
+        setSuccess('');
+        setLoading(true); // start loading
 
-    try {
-        const res = await axios.post(`${apiUrl}${loginUrl}`, {
-            email,
-            password,
-        });
+        try {
+            const res = await axios.post(`${apiUrl}${loginUrl}`, {
+                email,
+                password,
+            });
 
-if (res.data.status === true) {
-    // ✅ Store both token and user_id
-    localStorage.setItem("token", res.data.access_token);
-    localStorage.setItem("user_id", res.data.data.id);
+            if (res.data.status === true) {
+                // ✅ Store both token and user_id
+                localStorage.setItem("token", res.data.access_token);
+                localStorage.setItem("user_id", res.data.data.id);
+                localStorage.setItem("role_id", res.data.data.role);
+                console.log(res.data);
 
-    setSuccess(res.data.message || 'Login successful!');
-    setTimeout(() => {
-        router.push("/components/admin/owners"); // navigate after login
-    }, 1000);
-} else {
-    setError(res.data.message || 'Invalid email or password.');
-}
+                setSuccess(res.data.message || 'Login successful!');
+                setTimeout(() => {
+                    if (res.data.data.role === 1) {
+                        router.push("/components/admin/owners"); // navigate after login
+                    } else if (res.data.data.role === 2) {
+                        console.log('owner dashboard view');
+                        router.push("/components/owner/views/dashboard");//navigate to owner dashboard
+                    }
+                }, 1000);
+            } else {
+                setError(res.data.message || 'Invalid email or password.');
+            }
 
 
-    } catch (err) {
-        console.log(err);
-        setError('Invalid email or password.');
-    } finally {
-        setLoading(false);
-    }
-};
+        } catch (err) {
+            console.log(err);
+            setError('Invalid email or password.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
 
     // Auto hide popup after 3 seconds

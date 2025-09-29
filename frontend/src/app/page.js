@@ -9,6 +9,8 @@ export default function Home() {
 
   useEffect(() => {
     const apiToken = localStorage.getItem('token');
+    const roleId = localStorage.getItem('role_id');
+    console.log(roleId);
     if (apiToken) {
       router.push('/components/admin/dashboard');
     } else {
