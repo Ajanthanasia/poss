@@ -38,8 +38,8 @@ def store_owner_and_shop(data, admin_id):
             owner.email = email
             if password:
                 owner.password = generate_password_hash(password)
-            if not owner.api_token:
-                owner.api_token = create_access_token(identity=str(owner.id))
+            # if not owner.api_token:
+                # owner.api_token = create_access_token(identity=str(owner.id))
         else:
             owner = User(
                 name=owner_name,
@@ -50,7 +50,7 @@ def store_owner_and_shop(data, admin_id):
             )
             db.session.add(owner)
             db.session.flush()          # assign ID without commit
-            owner.api_token = create_access_token(identity=str(owner.id))
+            # owner.api_token = create_access_token(identity=str(owner.id))
 
         # --------------------
         # Handle UserProfile
@@ -106,7 +106,6 @@ def store_owner_and_shop(data, admin_id):
             'message': 'Owner and Shop stored successfully!',
             'owner_id': owner.id,
             'shop_id': shop.id,
-            'api_token': owner.api_token
         }), 200
 
     except Exception as e:
