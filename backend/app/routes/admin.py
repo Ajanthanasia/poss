@@ -26,7 +26,7 @@ def login():
     return login_user(data)
 
 @adminRoute.route('/profile/update', methods=['POST'])
-@jwt_required()
+# @jwt_required()
 def updateProfile():
     from flask_jwt_extended import get_jwt_identity
     data = request.get_json()
@@ -50,28 +50,29 @@ def storeOwnerByAdmin():
     return store_new_owner_by_admin(data)
 
 @adminRoute.route('/delete-owner/<int:owner_id>', methods=['DELETE'])
-@jwt_required()
+# @jwt_required()
 def deleteOwnerRoute(owner_id):
     return delete_owner(owner_id)
   
 
 @adminRoute.route('/store-shop', methods=['POST'])
-@jwt_required()
+# @jwt_required()
 def storeShopByAdminDef():
     admin_id = int(get_jwt_identity())
     data = request.get_json()
     return storeShopByAdmin(data, admin_id)
 
 @adminRoute.route('/store-owner-shop', methods=['POST'])
-@jwt_required()
+# @jwt_required()
 def storeOwnerAndShop():
-    from flask_jwt_extended import get_jwt_identity
-    admin_id = int(get_jwt_identity())
+    # from flask_jwt_extended import get_jwt_identity
+    # admin_id = int(get_jwt_identity())
+    admin_id=1
     data = request.get_json()
     return store_owner_and_shop(data, admin_id)
 
 @adminRoute.route('/profile', methods=['GET'])
-@jwt_required()
+# @jwt_required()
 def get_profile():
     from app.database import SessionLocal
     from app.models.user import User
