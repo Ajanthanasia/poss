@@ -8,6 +8,8 @@ import AdminHeader from "../header/page"
 export default function ShopAddForm() {
   const router = useRouter()
   const [owners, setOwners] = useState([])
+  const [loadingOwners, setLoadingOwners] = useState(true)
+  const [successMessage, setSuccessMessage] = useState("")
   const [form, setForm] = useState({
     owner_id: "",
     name: "",
@@ -18,12 +20,17 @@ export default function ShopAddForm() {
     country: "",
   })
 
-  // Dummy owners load (later replace with API)
   useEffect(() => {
-    setOwners([
-      { id: 1, name: "Owner 1" },
-      { id: 2, name: "Owner 2" },
-    ])
+    fetch("http://localhost:5000/api/shop/owners")
+      .then((res) => res.json())
+      .then((data) => {
+        setOwners(data)
+        setLoadingOwners(false)
+      })
+      .catch((err) => {
+        console.error("Failed to load owners", err)
+        setLoadingOwners(false)
+      })
   }, [])
 
   const handleChange = (e) => {
@@ -31,25 +38,55 @@ export default function ShopAddForm() {
     setForm((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log("Form submitted:", form)
-    // TODO: API call to backend
+    try {
+      const res = await fetch("http://localhost:5000/api/shop/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      })
+      const result = await res.json()
+      if (res.ok) {
+        setSuccessMessage("✅ Shop added successfully!")
+        setForm({
+          owner_id: "",
+          name: "",
+          email: "",
+          address: "",
+          city: "",
+          district: "",
+          country: "",
+        })
+        setTimeout(() => {
+          router.push("/components/admin/shops/index")
+        }, 2000)
+      } else {
+        alert("❌ Error: " + result.error)
+      }
+    } catch (err) {
+      console.error("Submit failed", err)
+      alert("❌ Failed to submit form. Please try again.")
+    }
   }
 
   return (
     <div className="flex min-h-screen bg-gray-50 font-sans text-sm">
       <AdminSidebar />
-
       <div className="flex-1 flex flex-col">
         <AdminHeader />
-
-        {/* Main Content */}
         <main className="flex-1 p-6">
           <div className="max-w-2xl mx-auto bg-white shadow-md rounded-xl p-6 border border-gray-200">
             <h2 className="text-xl font-semibold text-gray-800 mb-6 text-center">
               Add New Shop
             </h2>
+
+            {/* ✅ Success Message Box */}
+            {successMessage && (
+              <div className="mb-4 p-3 rounded-md bg-green-100 border border-green-400 text-green-800 text-sm font-medium text-center shadow-sm">
+                {successMessage}
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Owner Dropdown */}
@@ -65,11 +102,17 @@ export default function ShopAddForm() {
                   className="w-full border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-gray-800 text-sm"
                 >
                   <option value="">-- Select Owner --</option>
-                  {owners.map((owner) => (
-                    <option key={owner.id} value={owner.id}>
-                      {owner.name}
-                    </option>
-                  ))}
+                  {loadingOwners ? (
+                    <option disabled>Loading owners...</option>
+                  ) : owners.length > 0 ? (
+                    owners.map((owner) => (
+                      <option key={owner.id} value={owner.id}>
+                        {owner.name}
+                      </option>
+                    ))
+                  ) : (
+                    <option disabled>No owners found</option>
+                  )}
                 </select>
               </div>
 
@@ -134,7 +177,6 @@ export default function ShopAddForm() {
                     className="w-full border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-gray-800 text-sm"
                   />
                 </div>
-
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1">
                     District
@@ -181,8 +223,6 @@ export default function ShopAddForm() {
                     Submit
                   </button>
                 </div>
-
-                {/* Green View Shops Button */}
                 <button
                   type="button"
                   onClick={() => router.push("/components/admin/shops/index")}
