@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from app.controllers.shop_controller import get_owners, add_shop
 from app.controllers.admin_owners_controller import (
     index_owners,
     get_owner,
@@ -8,6 +9,7 @@ from app.controllers.admin_owners_controller import (
 from app.controllers.profile_controller import update_profile
 from app.controllers.login_controller import register_admin, login_user
 from app.database import SessionLocal
+from sqlalchemy.orm import joinedload
 from app.models.user import User
 import traceback
 
@@ -76,3 +78,155 @@ def storeOwnerByAdmin():
 @adminRoute.route('/delete-owner/<int:owner_id>', methods=['DELETE'])
 def deleteOwnerRoute(owner_id):
     return delete_owner(owner_id)
+
+@adminRoute.route('/shop/owners', methods=['GET'])
+def getOwnersList():
+    return get_owners()
+
+@adminRoute.route('/shop/add', methods=['POST'])
+def addShopRoute():
+    return add_shop()
+    
+@adminRoute.route('/shop/list', methods=['GET'])
+def list_shops():
+    try:
+        from app.models.shop import Shop
+        from app.database import SessionLocal
+        db = SessionLocal()
+
+        # ✅ Eagerly load owner relationship
+        shops = db.query(Shop).options(joinedload(Shop.owner)).all()
+
+        shop_list = [
+            {
+                "id": shop.id,
+                "name": shop.name,
+                "email": shop.email,
+                "location": f"{shop.address}, {shop.city}, {shop.district}, {shop.country}",
+                "owner": shop.owner.name if shop.owner else "Unknown"
+            }
+            for shop in shops
+        ]
+
+        db.close()
+        return jsonify(shop_list), 200
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": "Failed to fetch shops"}), 500
+        
+@adminRoute.route('/shop/delete/<int:shop_id>', methods=['DELETE'])
+def delete_shop(shop_id):
+    try:
+        from app.models.shop import Shop
+        from app.database import SessionLocal
+
+        db = SessionLocal()
+        shop = db.query(Shop).filter(Shop.id == shop_id).first()
+
+        if not shop:
+            db.close()
+            return jsonify({"error": "Shop not found"}), 404
+
+        db.delete(shop)
+        db.commit()
+        db.close()
+        return jsonify({"success": True}), 200
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": "Failed to delete shop"}), 500
+
+        # ----------------- SHOP ROUTES -----------------
+
+@adminRoute.route('/shop/<int:shop_id>', methods=['GET'])
+def get_shop(shop_id):
+    try:
+        from app.models.shop import Shop
+        from app.database import SessionLocal
+
+        db = SessionLocal()
+        shop = db.query(Shop).filter(Shop.id == shop_id).first()
+
+        if not shop:
+            db.close()
+            return jsonify({"error": "Shop not found"}), 404
+
+        shop_data = shop.to_dict()
+        db.close()
+        return jsonify(shop_data), 200
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": "Failed to fetch shop"}), 500
+
+
+@adminRoute.route('/shop/update/<int:shop_id>', methods=['PUT'])
+def update_shop(shop_id):
+    try:
+        from app.models.shop import Shop
+        from app.database import SessionLocal
+
+        data = request.get_json()
+        db = SessionLocal()
+        shop = db.query(Shop).filter(Shop.id == shop_id).first()
+
+        if not shop:
+            db.close()
+            return jsonify({"error": "Shop not found"}), 404
+
+        # Update fields
+        shop.owner_id = data.get("owner_id", shop.owner_id)
+        shop.name = data.get("name", shop.name)
+        shop.email = data.get("email", shop.email)
+        shop.address = data.get("address", shop.address)
+        shop.city = data.get("city", shop.city)
+        shop.district = data.get("district", shop.district)
+        shop.country = data.get("country", shop.country)
+
+        db.commit()
+        db.close()
+        return jsonify({"success": True}), 200
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": "Failed to update shop"}), 500
+
+@adminRoute.route('/shop/search', methods=['GET'])
+def search_shops():
+    try:
+        from app.models.shop import Shop
+        from app.database import SessionLocal
+        from sqlalchemy.orm import joinedload
+
+        name_query = request.args.get('name', '').strip()
+        db = SessionLocal()
+
+        query = db.query(Shop).options(joinedload(Shop.owner))
+        if name_query:
+            query = query.filter(Shop.name.ilike(f"%{name_query}%"))
+
+        shops = query.all()
+        db.close()
+
+        shop_list = [
+            {
+                "id": shop.id,
+                "name": shop.name,
+                "email": shop.email,
+                "location": f"{shop.address}, {shop.city}, {shop.district}, {shop.country}",
+                "owner": shop.owner.name if shop.owner else "Unknown"
+            }
+            for shop in shops
+        ]
+
+        return jsonify(shop_list), 200
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": "Search failed"}), 500
