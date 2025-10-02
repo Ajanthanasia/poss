@@ -13,10 +13,9 @@ export default function OwnerLayout({ children }) {
                 {/* Main Content */}
                 <div className="flex-1 flex">
 
-                    <div className="w-64 bg-gray-800 text-white">
-                        {/* side bar */}
+                    {/* <div className="w-64 bg-gray-800 text-white">
                         <OwnerAsideBar />
-                    </div>
+                    </div> */}
 
                     {/* Page content */}
                     <main className="flex-1 p-6 bg-gray-100">
