@@ -9,10 +9,16 @@ export default function Home() {
 
   useEffect(() => {
     const apiToken = localStorage.getItem('token');
-    const roleId = localStorage.getItem('role_id');
-    console.log(roleId);
+    const roleId = parseInt(localStorage.getItem('role_id') || "0", 10);
+    console.log('Role id : ', roleId);
     if (apiToken) {
-      router.push('/components/admin/dashboard');
+      if (roleId == 1) {
+        router.push('/components/admin/dashboard');
+      } else if (roleId == 2) {
+        router.push('/components/owner/views/dashboard');
+      } else {
+        router.push('/components/login');
+      }
     } else {
       router.push('/components/login');
     }
