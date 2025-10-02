@@ -15,7 +15,6 @@ class Shop(db.Model):
     district = db.Column(db.String(255), nullable=True)
     country = db.Column(db.String(255), nullable=True)
     status_id = db.Column(db.Integer, nullable=True)
-    creator_id = db.Column(db.Integer, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

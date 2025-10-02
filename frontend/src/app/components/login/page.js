@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
     const router = useRouter();
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL; // your API base URL
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000/'; // your API base URL
     const loginUrl = 'api/login'; // endpoint path
 
     const [email, setEmail] = useState('');
