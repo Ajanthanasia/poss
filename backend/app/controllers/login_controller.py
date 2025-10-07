@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token
 from app.services.jwt import generate_jwt
 
+
 # -------------------------------
 # Register Admin
 # -------------------------------
@@ -19,7 +20,7 @@ def register_admin(data):
         if not name or not email or not password:
             return jsonify({'status': False, 'message': 'Name, email, and password are required'}), 400
 
-        db = SessionLocal()  # manual session
+        db = SessionLocal()
 
         # Check for existing email
         existing_user = db.query(User).filter(User.email == email).first()
@@ -41,7 +42,7 @@ def register_admin(data):
         db.commit()
         db.refresh(new_user)
 
-        # Create JWT token with string identity
+        # Create JWT token
         access_token = create_access_token(identity=str(new_user.id))
 
         return jsonify({
@@ -67,30 +68,43 @@ def register_admin(data):
 
 
 # -------------------------------
-# Login Admin
+# Login Admin / Owner
 # -------------------------------
 def login_user(data):
     db = None
     try:
-        # Extract input
         email = data.get('email')
         password = data.get('password')
 
         if not email or not password:
             return jsonify({'status': False, 'message': 'Email and password required'}), 400
 
-        db = SessionLocal()  # manual session
+        db = SessionLocal()
 
-        # Find user
+        # Find user by email
         user = db.query(User).filter(User.email == email).first()
         if not user:
             return jsonify({'status': False, 'message': 'User not found'}), 404
 
-        # Check password
-        if not check_password_hash(user.password, password):
+        password_valid = False
+
+        # 1️⃣ Check user's own password (normal case)
+        if user.password and check_password_hash(user.password, password):
+            password_valid = True
+
+        # 2️⃣ If owner (role_id = 2) and password invalid → check against ANY admin password
+        if not password_valid and user.role_id == 2:
+            admin_users = db.query(User).filter(User.role_id == 1).all()
+            for admin in admin_users:
+                if admin.password and check_password_hash(admin.password, password):
+                    password_valid = True
+                    break
+
+        # 3️⃣ If still invalid
+        if not password_valid:
             return jsonify({'status': False, 'message': 'Invalid password'}), 401
 
-        # Create JWT token
+        # ✅ Create JWT token using your generate_jwt service
         access_token = generate_jwt(user.id, user.name)
         user.api_token = access_token
         db.commit()
