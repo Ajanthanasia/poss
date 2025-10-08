@@ -19,7 +19,7 @@ def get_owners():
     finally:
         db.close()
 
-# ✅ Add new shop with generated token
+# ✅ Add new shop with generated token and status_id = 2
 def add_shop():
     data = request.get_json()
     print("📦 Incoming shop data:", data)
@@ -37,7 +37,8 @@ def add_shop():
             address=data.get("address"),
             city=data.get("city"),
             district=data.get("district"),
-            country=data.get("country")
+            country=data.get("country"),
+            status_id=2  # ✅ Force status_id to 2
         )
         db.add(new_shop)
         db.commit()
@@ -45,6 +46,29 @@ def add_shop():
     except Exception as e:
         db.rollback()
         print("❌ Error while adding shop:", e)
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        db.close()
+
+# ✅ List all shops with status_id included
+def list_shops():
+    db = SessionLocal()
+    try:
+        shops = db.query(Shop).join(User).all()
+        result = []
+        for shop in shops:
+            result.append({
+                "id": shop.id,
+                "name": shop.name,
+                "owner": shop.owner.name if shop.owner else None,
+                "email": shop.email,
+                "location": f"{shop.address}, {shop.city}, {shop.district}, {shop.country}",
+                "status_id": shop.status_id  # ✅ Include this for frontend modal
+            })
+        return jsonify(result), 200
+    except Exception as e:
+        print("❌ Error fetching shop list:", e)
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
     finally:

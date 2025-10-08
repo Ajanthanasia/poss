@@ -40,11 +40,17 @@ export default function ShopAddForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    const payload = {
+      ...form,
+      status_id: 2, // ✅ Force status_id to 2
+    }
+
     try {
       const res = await fetch("http://localhost:5000/api/shop/add", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       })
       const result = await res.json()
       if (res.ok) {
@@ -81,7 +87,6 @@ export default function ShopAddForm() {
               Add New Shop
             </h2>
 
-            {/* ✅ Success Message Box */}
             {successMessage && (
               <div className="mb-4 p-3 rounded-md bg-green-100 border border-green-400 text-green-800 text-sm font-medium text-center shadow-sm">
                 {successMessage}

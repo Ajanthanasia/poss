@@ -1,6 +1,8 @@
 from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.services.user_service import get_user
+from app.controllers.owner_shop_controller import add_shop, list_shops
+
 
 # Create Blueprint
 users_bp = Blueprint('users', __name__, url_prefix='/users')
@@ -27,3 +29,12 @@ def get_user_route(user_id):
         "name": getattr(user, "name", None),  # fallback if name attribute missing
         "email": user.email
     }), 200
+#Route to add a new shop (POST)
+@users_bp.route('/shop/add', methods=['POST'])
+def add_shop_route():
+    return add_shop()
+
+#Route to list shops with status_id = 1 (GET)
+@users_bp.route('/shop/list', methods=['GET'])
+def list_shops_route():
+    return list_shops()

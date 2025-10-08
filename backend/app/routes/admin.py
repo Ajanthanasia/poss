@@ -84,6 +84,9 @@ def addShopRoute():
 def list_shops():
     try:
         from app.models.shop import Shop
+        from app.database import SessionLocal
+        from sqlalchemy.orm import joinedload
+
         db = SessionLocal()
         shops = db.query(Shop).options(joinedload(Shop.owner)).all()
 
@@ -93,7 +96,8 @@ def list_shops():
                 "name": shop.name,
                 "email": shop.email,
                 "location": f"{shop.address}, {shop.city}, {shop.district}, {shop.country}",
-                "owner": shop.owner.name if shop.owner else "Unknown"
+                "owner": shop.owner.name if shop.owner else "Unknown",
+                "status_id": shop.status_id
             }
             for shop in shops
         ]
@@ -193,7 +197,8 @@ def search_shops():
                 "name": shop.name,
                 "email": shop.email,
                 "location": f"{shop.address}, {shop.city}, {shop.district}, {shop.country}",
-                "owner": shop.owner.name if shop.owner else "Unknown"
+                "owner": shop.owner.name if shop.owner else "Unknown",
+                "status_id": shop.status_id  # ✅ Fixed comma issue
             }
             for shop in shops
         ]
