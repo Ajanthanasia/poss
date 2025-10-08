@@ -80,11 +80,11 @@ export default function OwnerDashboard() {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 gap-4 w-full">
               {shops.map((shop) => (
                 <div
                   key={shop.id}
-                  className="flex items-center bg-green-200 border border-gray-200 rounded-lg shadow-sm md:flex-row md:max-w-xl hover:bg-gray-100"
+                  className="flex items-center w-full bg-green-200 border border-gray-200 rounded-lg shadow-sm md:flex-row hover:bg-gray-100"
                 >
                   <Image
                     src="/shop.png"
