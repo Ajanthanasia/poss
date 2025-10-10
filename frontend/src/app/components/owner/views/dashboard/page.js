@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import OwnerLayout from "../../layouts/page";
+import OwnerAsideBar from "../../layouts/aside";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 

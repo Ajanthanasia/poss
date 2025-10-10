@@ -4,10 +4,15 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import AdminLayout from "../../common/page";
 
+// Heroicons (you can install via: npm install @heroicons/react)
+import { EyeIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
+
 export default function ShopsListComponent() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [shops, setShops] = useState([]);
+  const [selectedShop, setSelectedShop] = useState(null);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
 
   const handleAddNewShop = () => {
     router.push("/components/admin/shop-add-form");
@@ -16,16 +21,17 @@ export default function ShopsListComponent() {
   const handleEdit = (shopId) => {
     router.push(`/components/admin/shop-edit-form?id=${shopId}`);
   };
+
   const handleSearch = async () => {
-  try {
-    const res = await fetch(`http://localhost:5000/api/shop/search?name=${encodeURIComponent(searchTerm)}`);
-    const data = await res.json();
-    setShops(Array.isArray(data) ? data : []);
-  } catch (error) {
-    console.error("Search failed:", error);
-    setShops([]);
-  }
-};
+    try {
+      const res = await fetch(`http://localhost:5000/api/shop/search?name=${encodeURIComponent(searchTerm)}`);
+      const data = await res.json();
+      setShops(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Search failed:", error);
+      setShops([]);
+    }
+  };
 
   const handleDelete = async (shopId) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this shop?");
@@ -46,6 +52,11 @@ export default function ShopsListComponent() {
       console.error("Delete error:", err);
       alert("❌ Something went wrong while deleting.");
     }
+  };
+
+  const handleView = (shop) => {
+    setSelectedShop(shop);
+    setIsViewModalOpen(true);
   };
 
   useEffect(() => {
@@ -84,21 +95,24 @@ export default function ShopsListComponent() {
             Add New Shop
           </button>
         </div>
-            <div className="w-full max-w-6xl flex justify-end mb-4">
-  <input
-    type="text"
-    placeholder="Search by shop name..."
-    value={searchTerm}
-    onChange={(e) => setSearchTerm(e.target.value)}
-    className="border border-gray-300 rounded-md px-3 py-1.5 text-sm w-64 focus:outline-none focus:ring-2 focus:ring-gray-800"
-  />
-  <button
-    onClick={handleSearch}
-    className="ml-2 px-4 py-1.5 bg-gray-900 text-white rounded-md text-sm hover:bg-gray-700"
-  >
-    Search
-  </button>
-</div>
+
+        {/* Search */}
+        <div className="w-full max-w-6xl flex justify-end mb-4">
+          <input
+            type="text"
+            placeholder="Search by shop name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="border border-gray-300 rounded-md px-3 py-1.5 text-sm w-64 focus:outline-none focus:ring-2 focus:ring-gray-800"
+          />
+          <button
+            onClick={handleSearch}
+            className="ml-2 px-4 py-1.5 bg-gray-900 text-white rounded-md text-sm hover:bg-gray-700"
+          >
+            Search
+          </button>
+        </div>
+
         {/* Table Section */}
         <div className="w-full max-w-6xl bg-white rounded shadow p-6 overflow-x-auto">
           {Array.isArray(shops) && shops.length > 0 ? (
@@ -121,21 +135,30 @@ export default function ShopsListComponent() {
                     <td className="px-4 py-2 border">{shop.owner}</td>
                     <td className="px-4 py-2 border">{shop.email}</td>
                     <td className="px-4 py-2 border">{shop.location}</td>
-                    <td className="px-4 py-2 border text-center space-x-2">
-                      <button
-                        onClick={() => handleEdit(shop.id)}
-                        className="text-blue-600 hover:text-blue-800"
-                        title="Edit"
-                      >
-                        📝
-                      </button>
-                      <button
-                        onClick={() => handleDelete(shop.id)}
-                        className="text-red-600 hover:text-red-800"
-                        title="Delete"
-                      >
-                        🗑️
-                      </button>
+                    <td className="px-4 py-2 border text-center">
+                      <div className="flex justify-center items-center gap-3">
+                        <button
+                          onClick={() => handleView(shop)}
+                          title="View"
+                          className="text-gray-600 hover:text-gray-800"
+                        >
+                          <EyeIcon className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => handleEdit(shop.id)}
+                          title="Edit"
+                          className="text-blue-600 hover:text-blue-800"
+                        >
+                          <PencilSquareIcon className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(shop.id)}
+                          title="Delete"
+                          className="text-red-600 hover:text-red-800"
+                        >
+                          <TrashIcon className="w-5 h-5" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -144,8 +167,65 @@ export default function ShopsListComponent() {
           ) : (
             <p className="text-gray-500">No shops found.</p>
           )}
-        </div>
+        </div>{/* View Modal */}
+{isViewModalOpen && selectedShop && (
+  <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+    <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative">
+      <button
+        onClick={() => setIsViewModalOpen(false)}
+        className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+      >
+        ✖
+      </button>
+      <h2 className="text-xl font-semibold mb-4">Shop Details</h2>
 
+      {/* Normalize status_id once */}
+      {(() => {
+        // 🧪 Debug log to inspect status_id value and type
+        console.log("🧪 selectedShop.status_id =", selectedShop.status_id, "type:", typeof selectedShop.status_id);
+
+        const statusId = Number(selectedShop.status_id);
+        return (
+          <div className="space-y-2 text-sm text-gray-700">
+            <p><strong>ID:</strong> {selectedShop.id}</p>
+            <p><strong>Name:</strong> {selectedShop.name}</p>
+            <p><strong>Owner:</strong> {selectedShop.owner}</p>
+            <p><strong>Email:</strong> {selectedShop.email}</p>
+            <p><strong>Location:</strong> {selectedShop.location}</p>
+            <p>
+              <strong>Status:</strong>{" "}
+              {statusId === 2 ? (
+                <span className="text-green-600 font-semibold">Active</span>
+              ) : statusId === 1 ? (
+                <span className="text-yellow-600 font-semibold">Pending</span>
+              ) : (
+                <span className="text-gray-600">Unknown</span>
+              )}
+            </p>
+
+            {/* Conditional Buttons for Pending Status */}
+            {statusId === 1 && (
+              <div className="mt-6 flex justify-center gap-4">
+                <button
+                  className="px-4 py-1.5 bg-green-600 text-white rounded hover:bg-green-700 text-sm font-medium"
+                  onClick={() => alert("✅ Accept clicked")}
+                >
+                  Accept
+                </button>
+                <button
+                  className="px-4 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 text-sm font-medium"
+                  onClick={() => alert("❌ Reject clicked")}
+                >
+                  Reject
+                </button>
+              </div>
+            )}
+          </div>
+        );
+      })()}
+    </div>
+  </div>
+)}
       </div>
     </AdminLayout>
   );
