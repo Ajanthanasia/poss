@@ -19,7 +19,9 @@ def create_app():
 
     # Register Blueprints
     from app.routes.admin import adminRoute
+    from app.routes.auth import auth_bp
     app.register_blueprint(adminRoute)
+    app.register_blueprint(auth_bp)
 
     @app.route("/ping")
     def ping():
