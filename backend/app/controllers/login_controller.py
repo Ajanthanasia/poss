@@ -70,6 +70,9 @@ def register_admin(data):
 # -------------------------------
 # Login Admin / Owner
 # -------------------------------
+# -------------------------------
+# Login Admin / Owner
+# -------------------------------
 def login_user(data):
     db = None
     try:
@@ -89,16 +92,24 @@ def login_user(data):
         password_valid = False
 
         # 1️⃣ Check user's own password (normal case)
-        if user.password and check_password_hash(user.password, password):
-            password_valid = True
+        if user.password:
+            try:
+                if check_password_hash(user.password, password):
+                    password_valid = True
+            except ValueError as e:
+                print(f"⚠️ Invalid hash for user {user.email}: {e}")
 
         # 2️⃣ If owner (role_id = 2) and password invalid → check against ANY admin password
         if not password_valid and user.role_id == 2:
             admin_users = db.query(User).filter(User.role_id == 1).all()
             for admin in admin_users:
-                if admin.password and check_password_hash(admin.password, password):
-                    password_valid = True
-                    break
+                try:
+                    if admin.password and check_password_hash(admin.password, password):
+                        password_valid = True
+                        break
+                except ValueError as e:
+                    print(f"⚠️ Skipping invalid hash for admin {admin.email}: {e}")
+                    continue
 
         # 3️⃣ If still invalid
         if not password_valid:

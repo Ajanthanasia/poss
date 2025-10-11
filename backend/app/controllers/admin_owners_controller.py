@@ -16,12 +16,15 @@ def store_owner_with_token(data, admin_id=1):
         owner_name = data.get('owner_name')
         email = data.get('email')
         contact = data.get('contact')
-        password = data.get('password', None)
+        password = data.get('password')  # ✅ Make password required for creation
         country_code = data.get('country_code', '+94')
 
         # Validate required fields
-        if not all([owner_name, email, contact]):
+        if not owner_name or not email or not contact:
             return jsonify({'status': False, 'message': 'Owner name, email, and contact are required'}), 400
+
+        if not owner_id and not password:
+            return jsonify({'status': False, 'message': 'Password is required for new owner'}), 400
 
         if owner_id:
             # Fetch owner by ID for updating
@@ -44,7 +47,7 @@ def store_owner_with_token(data, admin_id=1):
             owner = User(
                 name=owner_name,
                 email=email,
-                password=generate_password_hash(password) if password else generate_password_hash('defaultpassword'),
+                password=generate_password_hash(password),
                 role_id=2,        # Owner
                 status_id=2,      # Active/Pending
                 api_token=secrets.token_urlsafe(64)
