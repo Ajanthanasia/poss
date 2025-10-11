@@ -16,7 +16,7 @@ def store_owner_with_token(data, admin_id=1):
         owner_name = data.get('owner_name')
         email = data.get('email')
         contact = data.get('contact')
-        password = data.get('password', None)
+        password = data.get('password', 'Abcd123$')
         country_code = data.get('country_code', '+94')
 
         # Validate required fields
@@ -33,7 +33,8 @@ def store_owner_with_token(data, admin_id=1):
             owner.name = owner_name
             owner.email = email
             if password:
-                owner.password = generate_password_hash(password)
+               hashed_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=16)
+               owner.password=hashed_password
 
         else:
             # Create new owner only if owner_id not provided
@@ -44,7 +45,7 @@ def store_owner_with_token(data, admin_id=1):
             owner = User(
                 name=owner_name,
                 email=email,
-                password=generate_password_hash(password) if password else generate_password_hash('defaultpassword'),
+                password=generate_password_hash(password, method='pbkdf2:sha256', salt_length=16) if password else generate_password_hash('defaultpassword'),
                 role_id=2,        # Owner
                 status_id=2,      # Active/Pending
                 api_token=secrets.token_urlsafe(64)
