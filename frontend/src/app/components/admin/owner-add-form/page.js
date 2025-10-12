@@ -167,7 +167,7 @@ export default function OwnerAddForm() {
                                     </button>
                                     <button
                                         type="button"
-                                        onClick={() => router.push("/components/admin/Owner-list")}
+                                        onClick={() => router.push("/components/admin/owners")}
                                         className="px-4 py-1.5 rounded-md bg-green-500 hover:bg-green-600 text-white font-bold transition"
                                     >
                                         View Owner List
