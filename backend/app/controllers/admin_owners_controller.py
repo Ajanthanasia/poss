@@ -16,11 +16,7 @@ def store_owner_with_token(data, admin_id=1):
         owner_name = data.get('owner_name')
         email = data.get('email')
         contact = data.get('contact')
-<<<<<<< HEAD
-        password = data.get('password')  # ✅ Make password required for creation
-=======
         password = data.get('password', 'Abcd123$')
->>>>>>> origin/development
         country_code = data.get('country_code', '+94')
 
         # Validate required fields
