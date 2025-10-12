@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import AdminHeader from '../header/page'
-import AdminSidebar from '../sidebar/page'
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import AdminHeader from '../header/page';
+import AdminSidebar from '../sidebar/page';
+import { EyeIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 export default function OwnersListPage() {
   const router = useRouter()
@@ -98,7 +99,7 @@ export default function OwnersListPage() {
               onClick={handleAddNewOwner}
               className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
             >
-              Add New Shop
+              Add Owner
             </button>
           </div>
 
@@ -118,6 +119,7 @@ export default function OwnersListPage() {
               <table className="min-w-full bg-white border rounded-lg shadow">
                 <thead className="bg-gray-100 text-gray-700">
                   <tr>
+                    <th className="py-3 px-4 text-center">#</th>
                     <th className="py-3 px-4 text-center">Name</th>
                     <th className="py-3 px-4 text-center">Email</th>
                     <th className="py-3 px-4 text-center">Contact</th>
@@ -125,30 +127,31 @@ export default function OwnersListPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {owners.map(owner => (
+                  {owners.map((owner, index) => (
                     <tr key={owner.id} className="border-b hover:bg-gray-50 align-top">
-                      <td className="py-3 px-4 text-center font-medium">{owner.name}</td>
-                      <td className="py-3 px-4 text-center">{owner.email}</td>
-                      <td className="py-3 px-4 text-center">{owner.country_code} {owner.contact}</td>
-                      <td className="py-3 px-4 text-center">
-                        <div className="flex flex-col gap-2 items-center">
+                      <td className="py-1 px-4 text-center text-black">{index + 1}</td>
+                      <td className="py-1 px-4 text-center font-medium text-black">{owner.name}</td>
+                      <td className="py-1 px-4 text-center text-black">{owner.email}</td>
+                      <td className="py-1 px-4 text-center text-black">{owner.country_code} {owner.contact}</td>
+                      <td className="py-1 px-4 text-center text-black">
+                        <div className="flex gap-2">
                           <button
                             onClick={() => viewOwner(owner)}
-                            className="w-20 px-2 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 transition"
+                            className="px-2 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 transition"
                           >
-                            View
+                            <EyeIcon className="w-5 h-5 mx-auto" />
                           </button>
                           <button
                             onClick={() => router.push(`/edit/${owner.id}`)}
-                            className="w-20 px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+                            className="px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
                           >
-                            Edit
+                            <PencilSquareIcon className="w-5 h-5 mx-auto" />
                           </button>
                           <button
                             onClick={() => deleteOwner(owner.id)}
-                            className="w-20 px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition"
+                            className="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition"
                           >
-                            Delete
+                            <TrashIcon className="w-5 h-5 mx-auto" />
                           </button>
                         </div>
                       </td>
