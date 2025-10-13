@@ -13,13 +13,15 @@ export default function OwnerAddForm() {
     const [email, setEmail] = useState("")
     const [contact, setContact] = useState("")
     const [countryCode, setCountryCode] = useState("+94")
+    const [password, setPassword] = useState("")
     const [successMsg, setSuccessMsg] = useState("")
     const [errorMsg, setErrorMsg] = useState("")
 
     const handleSubmit = async (e) => {
         e.preventDefault()
 
-        if (!ownerName.trim() || !email.trim() || !contact.trim()) {
+        // Validation including password
+        if (!ownerName.trim() || !email.trim() || !contact.trim() || !password.trim()) {
             setErrorMsg("Please fill all required fields.")
             return
         }
@@ -36,7 +38,8 @@ export default function OwnerAddForm() {
                     owner_name: ownerName,
                     email,
                     contact,
-                    country_code: countryCode
+                    country_code: countryCode,
+                    password   // send password to backend
                 }),
             })
 
@@ -46,6 +49,7 @@ export default function OwnerAddForm() {
                 setEmail("")
                 setContact("")
                 setCountryCode("+94")
+                setPassword("")
                 setErrorMsg("")
             } else {
                 const err = await res.json().catch(() => ({}))
@@ -140,6 +144,18 @@ export default function OwnerAddForm() {
                                             className="flex-1 border border-gray-300 rounded-r-md px-3 py-1.5 text-black focus:outline-none focus:ring-2 focus:ring-gray-800"
                                         />
                                     </div>
+                                </div>
+
+                                {/* Password Field */}
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-600 mb-1">Password</label>
+                                    <input
+                                        type="password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        placeholder="Enter password"
+                                        className="w-full border border-gray-300 rounded-md px-3 py-1.5 text-black focus:outline-none focus:ring-2 focus:ring-gray-800"
+                                    />
                                 </div>
 
                                 <div className="flex justify-between items-center pt-3">

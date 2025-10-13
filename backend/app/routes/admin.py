@@ -21,10 +21,12 @@ def signupFunc():
     data = request.get_json()
     return register_admin(data)
 
+
 @adminRoute.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
     return login_user(data)
+
 
 @adminRoute.route('/profile/update', methods=['POST'])
 def updateProfile():
@@ -32,6 +34,7 @@ def updateProfile():
     user_id = data.get('user_id')
     data['user_id'] = user_id
     return update_profile(data)
+
 
 @adminRoute.route('/profile', methods=['GET'])
 def get_profile():
@@ -53,51 +56,25 @@ def get_profile():
         'email': user.email
     })
 
-# ----------------- OWNER ROUTES -----------------
-@adminRoute.route('/index-owners', methods=['GET'])
-def indexOfOwnersList():
-    return index_owners()
-
-@adminRoute.route('/index-owners/<int:owner_id>', methods=['GET'])
-def indexOwnerDetails(owner_id):
-    return get_owner(owner_id)
-
-@adminRoute.route('/store-owner', methods=['POST'])
-def storeOwnerByAdmin():
-    data = request.get_json()
-    return store_owner_with_token(data)
-
-@adminRoute.route('/delete-owner/<int:owner_id>', methods=['DELETE'])
-def deleteOwnerRoute(owner_id):
-    return delete_owner(owner_id)
-
-@adminRoute.route('/shop/owners', methods=['GET'])
-def getOwnersList():
-    return get_owners()
-
-@adminRoute.route('/shop/add', methods=['POST'])
-def addShopRoute():
-    return add_shop()
 
 # ----------------- SHOP ROUTES -----------------
-@adminRoute.route('/shop/list', methods=['GET'])
-def list_shops():
+@adminRoute.route('/shop/owner/<int:owner_id>', methods=['GET'])
+def get_shops_by_owner(owner_id):
+    """Fetch active shops (status_id = 2) for a given owner"""
     try:
         from app.models.shop import Shop
-        from app.database import SessionLocal
-        from sqlalchemy.orm import joinedload
-
         db = SessionLocal()
-        shops = db.query(Shop).options(joinedload(Shop.owner)).all()
+        shops = db.query(Shop).filter(Shop.owner_id == owner_id, Shop.status_id == 2).all()
 
         shop_list = [
             {
                 "id": shop.id,
                 "name": shop.name,
                 "email": shop.email,
-                "location": f"{shop.address}, {shop.city}, {shop.district}, {shop.country}",
-                "owner": shop.owner.name if shop.owner else "Unknown",
-                "status_id": shop.status_id
+                "address": shop.address,
+                "city": shop.city,
+                "district": shop.district,
+                "country": shop.country,
             }
             for shop in shops
         ]
@@ -107,7 +84,8 @@ def list_shops():
 
     except Exception as e:
         traceback.print_exc()
-        return jsonify({"error": "Failed to fetch shops"}), 500
+        return jsonify({"error": "Failed to fetch owner shops"}), 500
+
 
 @adminRoute.route('/shop/delete/<int:shop_id>', methods=['DELETE'])
 def delete_shop(shop_id):
@@ -129,6 +107,7 @@ def delete_shop(shop_id):
         traceback.print_exc()
         return jsonify({"error": "Failed to delete shop"}), 500
 
+
 @adminRoute.route('/shop/<int:shop_id>', methods=['GET'])
 def get_shop(shop_id):
     try:
@@ -147,6 +126,7 @@ def get_shop(shop_id):
     except Exception as e:
         traceback.print_exc()
         return jsonify({"error": "Failed to fetch shop"}), 500
+
 
 @adminRoute.route('/shop/update/<int:shop_id>', methods=['PUT'])
 def update_shop(shop_id):
@@ -176,15 +156,15 @@ def update_shop(shop_id):
         traceback.print_exc()
         return jsonify({"error": "Failed to update shop"}), 500
 
+
 @adminRoute.route('/shop/search', methods=['GET'])
 def search_shops():
     try:
         from app.models.shop import Shop
         db = SessionLocal()
-        from sqlalchemy.orm import joinedload
-
         name_query = request.args.get('name', '').strip()
         query = db.query(Shop).options(joinedload(Shop.owner))
+
         if name_query:
             query = query.filter(Shop.name.ilike(f"%{name_query}%"))
 
@@ -197,8 +177,7 @@ def search_shops():
                 "name": shop.name,
                 "email": shop.email,
                 "location": f"{shop.address}, {shop.city}, {shop.district}, {shop.country}",
-                "owner": shop.owner.name if shop.owner else "Unknown",
-                "status_id": shop.status_id  # ✅ Fixed comma issue
+                "owner": shop.owner.name if shop.owner else "Unknown"
             }
             for shop in shops
         ]
@@ -208,31 +187,3 @@ def search_shops():
     except Exception as e:
         traceback.print_exc()
         return jsonify({"error": "Search failed"}), 500
-
-# ----------------- GET SHOPS BY OWNER -----------------
-@adminRoute.route('/shop/owner/<int:owner_id>', methods=['GET'])
-def get_shops_by_owner(owner_id):
-    try:
-        from app.models.shop import Shop
-        db = SessionLocal()
-        shops = db.query(Shop).filter(Shop.owner_id == owner_id).all()
-
-        shop_list = [
-            {
-                "id": shop.id,
-                "name": shop.name,
-                "email": shop.email,
-                "address": shop.address,
-                "city": shop.city,
-                "district": shop.district,
-                "country": shop.country,
-            }
-            for shop in shops
-        ]
-
-        db.close()
-        return jsonify(shop_list), 200
-
-    except Exception as e:
-        traceback.print_exc()
-        return jsonify({"error": "Failed to fetch owner shops"}), 500

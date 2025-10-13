@@ -20,8 +20,11 @@ def store_owner_with_token(data, admin_id=1):
         country_code = data.get('country_code', '+94')
 
         # Validate required fields
-        if not all([owner_name, email, contact]):
+        if not owner_name or not email or not contact:
             return jsonify({'status': False, 'message': 'Owner name, email, and contact are required'}), 400
+
+        if not owner_id and not password:
+            return jsonify({'status': False, 'message': 'Password is required for new owner'}), 400
 
         if owner_id:
             # Fetch owner by ID for updating
