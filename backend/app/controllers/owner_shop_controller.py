@@ -1,8 +1,17 @@
-from flask import request, jsonify
+from flask import request, jsonify, g
 from app import db
 from app.models.shop import Shop
 from app.models.user import User  # Assuming owner is a User
 import uuid
+
+def test():
+    auth = g.auth_user
+    return {
+        'status': True,
+        'message':'Testing!!!',
+        'user': auth.id,
+        'user': auth.name
+    }
 
 def add_shop():
     data = request.get_json()
