@@ -52,7 +52,6 @@ def get_profile():
     })
 
 
-<<<<<<< Updated upstream
 # ----------------- SHOP ROUTES -----------------
 @adminRoute.route('/shop/owner/<int:owner_id>', methods=['GET'])
 def get_shops_by_owner(owner_id):
@@ -62,7 +61,6 @@ def get_shops_by_owner(owner_id):
         db = SessionLocal()
         shops = db.query(Shop).filter(Shop.owner_id == owner_id, Shop.status_id == 2).all()
 
-=======
 # ----------------- OWNER ROUTES -----------------
 
 @adminRoute.route('/index-owners', methods=['GET'])
@@ -205,7 +203,6 @@ def get_shops_by_owner(owner_id):
         from app.models.shop import Shop
         db = SessionLocal()
         shops = db.query(Shop).filter(Shop.owner_id == owner_id).all()
->>>>>>> Stashed changes
         shop_list = [
             {
                 "id": shop.id,
@@ -215,7 +212,6 @@ def get_shops_by_owner(owner_id):
                 "city": shop.city,
                 "district": shop.district,
                 "country": shop.country,
-<<<<<<< Updated upstream
             }
             for shop in shops
         ]
@@ -328,7 +324,6 @@ def search_shops():
     except Exception as e:
         traceback.print_exc()
         return jsonify({"error": "Search failed"}), 500
-=======
             } for shop in shops
         ]
         db.close()
@@ -336,4 +331,37 @@ def search_shops():
     except Exception as e:
         traceback.print_exc()
         return jsonify({"error": "Failed to fetch owner shops"}), 500
->>>>>>> Stashed changes
+
+# ----------------- OWNER ROUTES -----------------
+@adminRoute.route('/index-owners', methods=['GET'])
+def indexOfOwnersList():
+    return index_owners()
+
+@adminRoute.route('/index-owners/<int:owner_id>', methods=['GET'])
+def indexOwnerDetails(owner_id):
+    return get_owner(owner_id)
+
+@adminRoute.route('/store-owner', methods=['POST'])
+def storeOwnerByAdmin():
+    try:
+        data = request.get_json()
+        return store_owner_with_token(data)
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": "Failed to create owner"}), 500
+
+@adminRoute.route('/delete-owner/<int:owner_id>', methods=['DELETE'])
+def deleteOwnerRoute(owner_id):
+    try:
+        return delete_owner(owner_id)
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": "Failed to delete owner"}), 500
+
+@adminRoute.route('/shop/owners', methods=['GET'])
+def getOwnersList():
+    try:
+        return get_owners()
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": "Failed to fetch shop owners"}), 500

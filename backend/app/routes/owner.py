@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from app.middlewares.auth_middleware import auth_middleware
 from app.controllers.admin_owners_controller import (
     index_owners,
     get_owner,
@@ -6,40 +7,18 @@ from app.controllers.admin_owners_controller import (
     delete_owner
 )
 from app.controllers.shop_controller import get_owners
+from app.controllers.owner_shop_controller import test
 import traceback
 
-ownerRoute = Blueprint('owner', __name__, url_prefix='/api')  # same prefix as before
+ownerRoute = Blueprint('owner', __name__, url_prefix='/api/owns')  # same prefix as before
 
-# ----------------- OWNER ROUTES -----------------
-@ownerRoute.route('/index-owners', methods=['GET'])
-def indexOfOwnersList():
-    return index_owners()
 
-@ownerRoute.route('/index-owners/<int:owner_id>', methods=['GET'])
-def indexOwnerDetails(owner_id):
-    return get_owner(owner_id)
-
-@ownerRoute.route('/store-owner', methods=['POST'])
-def storeOwnerByAdmin():
+@ownerRoute.route('/test', methods=['GET'])
+@auth_middleware
+def test_route():
     try:
-        data = request.get_json()
-        return store_owner_with_token(data)
+        response = test()
+        return jsonify(response), 200
     except Exception as e:
         traceback.print_exc()
-        return jsonify({"error": "Failed to create owner"}), 500
-
-@ownerRoute.route('/delete-owner/<int:owner_id>', methods=['DELETE'])
-def deleteOwnerRoute(owner_id):
-    try:
-        return delete_owner(owner_id)
-    except Exception as e:
-        traceback.print_exc()
-        return jsonify({"error": "Failed to delete owner"}), 500
-
-@ownerRoute.route('/shop/owners', methods=['GET'])
-def getOwnersList():
-    try:
-        return get_owners()
-    except Exception as e:
-        traceback.print_exc()
-        return jsonify({"error": "Failed to fetch shop owners"}), 500
+        return jsonify({'success': False, 'message': str(e)}), 500
