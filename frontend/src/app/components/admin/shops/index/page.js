@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import AdminLayout from "../../common/page";
 import { EyeIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import axios from "axios";
 
 export default function ShopsListComponent() {
   const router = useRouter();
@@ -60,15 +61,12 @@ export default function ShopsListComponent() {
   useEffect(() => {
     const fetchShops = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/shop/list");
-        const data = await res.json();
-        if (Array.isArray(data)) {
-          setShops(data);
-        } else if (Array.isArray(data.shops)) {
-          setShops(data.shops);
-        } else {
-          console.warn("Unexpected format:", data);
-          setShops([]);
+        const res = await axios.get("http://localhost:5000/api/shop/list");
+        console.log(res);
+        console.log(res.data);
+        if (res.data.status == true) {
+          console.log(res.data.data);
+          setShops(res.data.data);
         }
       } catch (error) {
         console.error("Error fetching shops:", error);
@@ -121,7 +119,7 @@ export default function ShopsListComponent() {
                   <th className="px-4 py-2 border">Shop Name</th>
                   <th className="px-4 py-2 border">Owner</th>
                   <th className="px-4 py-2 border">Email</th>
-                  <th className="px-4 py-2 border">Location</th>
+                  <th className="px-4 py-2 border">Address</th>
                   <th className="px-4 py-2 border text-center">Actions</th>
                 </tr>
               </thead>
@@ -130,9 +128,9 @@ export default function ShopsListComponent() {
                   <tr key={shop.id} className="hover:bg-gray-50">
                     <td className="px-4 py-2 border text-center">{shop.id}</td>
                     <td className="px-4 py-2 border">{shop.name}</td>
-                    <td className="px-4 py-2 border">{shop.owner}</td>
+                    <td className="px-4 py-2 border">{shop.owner.name ?? ''}</td>
                     <td className="px-4 py-2 border">{shop.email}</td>
-                    <td className="px-4 py-2 border">{shop.location}</td>
+                    <td className="px-4 py-2 border">{shop.address}</td>
                     <td className="px-4 py-2 border text-center">
                       <div className="flex justify-center items-center gap-3">
                         <button
@@ -220,6 +218,6 @@ export default function ShopsListComponent() {
           </div>
         )}
       </div>
-   </AdminLayout>
+    </AdminLayout>
   );
 }

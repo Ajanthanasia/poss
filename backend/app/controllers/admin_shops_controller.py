@@ -47,3 +47,16 @@ def storeShopByAdmin(data):
 
     finally:
         db.close()
+
+def listShops():
+    db = SessionLocal()
+    try:
+        shopData = Shop.query.all()
+        shops = ([shop.to_dict() for shop in shopData])
+        return jsonify({'status':True,'data':shops}),200
+    except Exception as e:
+        print(f"Error in listShops: {e}")
+        return jsonify({'status': False, 'message': 'Whoops! Something went wrong'}), 500
+
+    finally:
+        db.close()

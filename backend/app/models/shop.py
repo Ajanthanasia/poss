@@ -19,3 +19,23 @@ class Shop(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     owner = db.relationship("User", back_populates="shops")
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "owner_id": self.owner_id,
+            "name": self.name,
+            "email": self.email,
+            "token": self.token,
+            "address": self.address,
+            "city": self.city,
+            "district": self.district,
+            "country": self.country,
+            "status_id": self.status_id,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+            "owner":{
+                "id":self.owner.id,
+                "name":self.owner.name,
+            } if self.owner else None
+        }
