@@ -69,3 +69,18 @@ CREATE TABLE
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     );
+
+CREATE TABLE
+    shop_items (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        shop_id INT NOT NULL,
+        name VARCHAR(127) NULL DEFAULT NULL,
+        unit_type enum ('kg', 'l', 'piece') NULL DEFAULT NULL,
+        description VARCHAR(255) NULL DEFAULT NULL,
+        price DECIMAL(10, 2) NULL DEFAULT NULL,
+        qty INT NULL DEFAULT NULL,
+        status_id INT NULL DEFAULT NULL,
+        creator_id INT NULL DEFAULT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    );
