@@ -8,6 +8,7 @@ from app.controllers.admin_owners_controller import (
 )
 from app.controllers.profile_controller import update_profile
 from app.controllers.login_controller import register_admin, login_user
+from app.controllers.admin_shops_controller import storeShopByAdmin, listShops
 from app.database import SessionLocal
 from sqlalchemy.orm import joinedload
 from app.models.user import User
@@ -221,3 +222,11 @@ def getOwnersList():
     except Exception as e:
         traceback.print_exc()
         return jsonify({"error": "Failed to fetch shop owners"}), 500
+
+@adminRoute.route('/shop/list', methods=['GET'])
+def getlistOfShops():
+    try:
+        return listShops()
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": "Failed to fetch shops"}), 500
