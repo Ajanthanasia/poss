@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import OwnerLayout from "../../layouts/page";
-import OwnerAsideBar from "../../layouts/aside";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -13,7 +12,7 @@ export default function OwnerDashboard() {
 
   const [ownerId, setOwnerId] = useState(null);
 
-  // Get ownerId only on client
+  // Get ownerId from localStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
       const id = localStorage.getItem("user_id");
@@ -26,13 +25,14 @@ export default function OwnerDashboard() {
 
     const fetchShops = async () => {
       try {
-        const res = await fetch(
-          `http://127.0.0.1:5000/api/shop/owner/${ownerId}`
-        );
+        const res = await fetch(`http://127.0.0.1:5000/api/shop/owner/${ownerId}`);
         const data = await res.json();
-        setShops(data || []);
+
+        // Ensure shops is always an array
+        setShops(Array.isArray(data.data) ? data.data : []);
       } catch (error) {
         console.error("Failed to fetch shops", error);
+        setShops([]);
       } finally {
         setLoading(false);
       }
