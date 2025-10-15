@@ -1,5 +1,4 @@
 from flask import Blueprint, request, jsonify
-from app.controllers.shop_controller import get_owners, add_shop
 from app.controllers.admin_owners_controller import (
     index_owners,
     get_owner,
@@ -8,7 +7,7 @@ from app.controllers.admin_owners_controller import (
 )
 from app.controllers.profile_controller import update_profile
 from app.controllers.login_controller import register_admin, login_user
-from app.controllers.admin_shops_controller import storeShopByAdmin, listShops
+from app.controllers.admin_shops_controller import listShops, get_owners, add_shop
 from app.database import SessionLocal
 from sqlalchemy.orm import joinedload
 from app.models.user import User
@@ -59,6 +58,11 @@ def get_profile():
 
 
 # ----------------- SHOP ROUTES -----------------
+
+@adminRoute.route('/shop/add', methods=['POST'])
+def addShopRoute():
+    return add_shop()
+
 @adminRoute.route('/shop/owner/<int:owner_id>', methods=['GET'])
 def get_shops_by_owner(owner_id):
     """Fetch active shops (status_id = 2) for a given owner"""
