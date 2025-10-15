@@ -164,59 +164,55 @@ export default function ShopsListComponent() {
             <p className="text-gray-500">No shops found.</p>
           )}
         </div>
+{/* View Modal */}
+{isViewModalOpen && selectedShop?.id && (
+  <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+    <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative">
+      <button
+        onClick={() => setIsViewModalOpen(false)}
+        className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+      >
+        ✖
+      </button>
+      <h2 className="text-xl font-semibold mb-4">Shop Details</h2>
+      <div className="space-y-2 text-sm text-gray-700">
+       <p><strong>ID:</strong> {selectedShop.id}</p>
+<p><strong>Name:</strong> {selectedShop.name}</p>
+<p><strong>Owner:</strong> {selectedShop.owner?.name || "Unknown"}</p>
+<p><strong>Email:</strong> {selectedShop.email}</p>
+<p><strong>Location:</strong> {selectedShop.location}</p>
+<p>
+  <strong>Status:</strong>{" "}
+  {selectedShop.status_id === 2 ? (
+    <span className="text-green-600 font-semibold">Active</span>
+  ) : selectedShop.status_id === 1 ? (
+    <span className="text-yellow-600 font-semibold">Pending</span>
+  ) : (
+    <span className="text-gray-600">Unknown</span>
+  )}
+</p>
 
-        {/* View Modal */}
-        {isViewModalOpen && selectedShop && (
-          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative">
-              <button
-                onClick={() => setIsViewModalOpen(false)}
-                className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-              >
-                ✖
-              </button>
-              <h2 className="text-xl font-semibold mb-4">Shop Details</h2>
-              {(() => {
-                const statusId = Number(selectedShop.status_id);
-                return (
-                  <div className="space-y-2 text-sm text-gray-700">
-                    <p><strong>ID:</strong> {selectedShop.id}</p>
-                    <p><strong>Name:</strong> {selectedShop.name}</p>
-                    <p><strong>Owner:</strong> {selectedShop.owner}</p>
-                    <p><strong>Email:</strong> {selectedShop.email}</p>
-                    <p><strong>Location:</strong> {selectedShop.location}</p>
-                    <p>
-                      <strong>Status:</strong>{" "}
-                      {statusId === 2 ? (
-                        <span className="text-green-600 font-semibold">Active</span>
-                      ) : statusId === 1 ? (
-                        <span className="text-yellow-600 font-semibold">Pending</span>
-                      ) : (
-                        <span className="text-gray-600">Unknown</span>
-                      )}
-                    </p>
-                    {statusId === 1 && (
-                      <div className="mt-6 flex justify-center gap-4">
-                        <button
-                          className="px-4 py-1.5 bg-green-600 text-white rounded hover:bg-green-700 text-sm font-medium"
-                          onClick={() => alert("✅ Accept clicked")}
-                        >
-                          Accept
-                        </button>
-                        <button
-                          className="px-4 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 text-sm font-medium"
-                          onClick={() => alert("❌ Reject clicked")}
-                        >
-                          Reject
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                );
-              })()}
-            </div>
+
+        {selectedShop.status_id === 1 && (
+          <div className="mt-6 flex justify-center gap-4">
+            <button
+              className="px-4 py-1.5 bg-green-600 text-white rounded hover:bg-green-700 text-sm font-medium"
+              onClick={() => alert("✅ Accept clicked")}
+            >
+              Accept
+            </button>
+            <button
+              className="px-4 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 text-sm font-medium"
+              onClick={() => alert("❌ Reject clicked")}
+            >
+              Reject
+            </button>
           </div>
         )}
+      </div>
+    </div>
+  </div>
+)}
       </div>
     </AdminLayout>
   );
