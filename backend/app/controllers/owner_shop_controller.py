@@ -38,7 +38,8 @@ def add_shop():
             district=data.get("district"),
             country=data.get("country"),
             status_id=1,  # Set status_id to 1
-            token=str(uuid.uuid4())
+            token=str(uuid.uuid4()),
+            creator_id=auth.id # set creator id to authenticated user id
         )
 
         db.session.add(new_shop)
