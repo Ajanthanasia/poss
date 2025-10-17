@@ -64,7 +64,7 @@ export default function OwnerDashboard() {
               You don’t have any shops yet.
             </p>
             <button
-              onClick={() => router.push("/owner/addshop")}
+              onClick={() => router.push("/components/owner/views/addShop")}
               className="px-6 py-3 bg-green-600 text-white font-medium rounded-lg shadow hover:bg-green-700 transition-all"
             >
               ➕ Add Your First Shop
@@ -74,7 +74,7 @@ export default function OwnerDashboard() {
           <>
             <div className="self-end mb-2">
               <button
-                onClick={() => router.push("/owner/addshop")}
+                onClick={() => router.push("/components/owner/views/addShop")}
                 className="px-5 py-2 bg-green-600 text-white font-medium rounded-lg shadow hover:bg-green-700 transition-all"
               >
                 ➕ Add New Shop
