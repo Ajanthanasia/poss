@@ -38,7 +38,7 @@ def add_shop(data):
             city=data.get("city"),
             district=data.get("district"),
             country=data.get("country"),
-            status_id=2
+            status_id=2  # 2 means active
         )
         db.add(new_shop)
         db.commit()
@@ -51,25 +51,31 @@ def add_shop(data):
     finally:
         db.close()
 
+
 def get_shop_by_id(shop_id):
     db = SessionLocal()
     try:
         shop = db.query(Shop).options(joinedload(Shop.owner)).filter(Shop.id == shop_id).first()
         if not shop:
             return jsonify({'status': False, 'message': 'Shop not found'}), 404
+
         data = {
             "id": shop.id,
             "name": shop.name,
             "email": shop.email,
             "location": f"{shop.address}, {shop.city}, {shop.district}, {shop.country}",
-            "owner": shop.owner.name if shop.owner else "Unknown"
+            "owner": shop.owner.name if shop.owner else "Unknown",
+            "status_id": shop.status_id,
+            "status": "active" if shop.status_id == 2 else "inactive"
         }
+
         return jsonify({'status': True, 'message': 'Success', 'data': data}), 200
     except Exception as e:
         traceback.print_exc()
         return jsonify({'status': False, 'message': str(e)}), 500
     finally:
         db.close()
+
 
 def update_shop(shop_id, data):
     db = SessionLocal()
@@ -78,7 +84,7 @@ def update_shop(shop_id, data):
         if not shop:
             return jsonify({'status': False, 'message': 'Shop not found'}), 404
 
-        for key in ["owner_id", "name", "email", "address", "city", "district", "country"]:
+        for key in ["owner_id", "name", "email", "address", "city", "district", "country", "status_id"]:
             if key in data:
                 setattr(shop, key, data[key])
 
@@ -90,6 +96,7 @@ def update_shop(shop_id, data):
         return jsonify({'status': False, 'message': str(e)}), 500
     finally:
         db.close()
+
 
 def delete_shop(shop_id):
     db = SessionLocal()
@@ -107,6 +114,7 @@ def delete_shop(shop_id):
     finally:
         db.close()
 
+
 def search_shops(name_query=''):
     db = SessionLocal()
     try:
@@ -122,7 +130,8 @@ def search_shops(name_query=''):
                 "name": s.name,
                 "email": s.email,
                 "location": f"{s.address}, {s.city}, {s.district}, {s.country}",
-                "owner": s.owner.name if s.owner else "Unknown"
+                "owner": s.owner.name if s.owner else "Unknown",
+                "status": "active" if s.status_id == 2 else "inactive"
             })
         return jsonify({'status': True, 'message': 'Success', 'data': data}), 200
     except Exception as e:
@@ -131,23 +140,23 @@ def search_shops(name_query=''):
     finally:
         db.close()
 
+
 def get_owners_list():
     db = SessionLocal()
     try:
         owners = db.query(User).filter(User.role_id == 2, User.status_id == 2).all()
-        data = [{"id": o.id, "name": o.name} for o in owners]  # name instead of label
-        return jsonify(data), 200  # return plain array
+        data = [{"id": o.id, "name": o.name} for o in owners]
+        return jsonify(data), 200
     except Exception as e:
         traceback.print_exc()
         return jsonify({'status': False, 'message': str(e)}), 500
     finally:
         db.close()
-        
+
 def get_shops_by_owner(owner_id):
     db = SessionLocal()
     try:
         shops = db.query(Shop).filter(Shop.owner_id == owner_id).all()
-
         data = [
             {
                 "id": shop.id,
@@ -156,13 +165,13 @@ def get_shops_by_owner(owner_id):
                 "address": shop.address,
                 "city": shop.city,
                 "district": shop.district,
-                "country": shop.country
+                "country": shop.country,
+                "status_id": shop.status_id,             # <-- add this
+                "status": "active" if shop.status_id == 2 else "inactive"
             }
             for shop in shops
         ]
-
         return jsonify(data), 200
-
     except Exception as e:
         traceback.print_exc()
         return jsonify({'status': False, 'message': str(e)}), 500
