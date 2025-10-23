@@ -1,8 +1,11 @@
 from flask import jsonify
 from app import db
+from flask import request, jsonify
 from app.models import User, UserProfile
 from werkzeug.security import generate_password_hash
 import secrets, traceback
+from app.database import SessionLocal
+
 
 def store_owner_with_token(data, admin_id=1):
     try:
@@ -107,3 +110,34 @@ def delete_owner(owner_id):
         db.session.rollback()
         traceback.print_exc()
         return jsonify({'status': False, 'message': str(e)}), 500
+
+
+def search_owners():
+    db = SessionLocal()
+    try:
+        query_param = request.args.get('query', '').strip().lower()
+        query = db.query(User).filter(User.role_id == 2)  # Only owners
+
+        if query_param:
+            query = query.filter(
+                (User.name.ilike(f"%{query_param}%")) |
+                (User.email.ilike(f"%{query_param}%"))
+            )
+
+        users = query.all()
+        data = [{
+            "id": u.id,
+            "name": u.name,
+            "email": u.email,
+            "contact": u.profile.contact if u.profile else '',
+            "country_code": u.profile.country_code if u.profile else ''
+        } for u in users]
+
+        return jsonify({'status': True, 'message': 'Success', 'data': data}), 200
+
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'status': False, 'message': str(e)}), 500
+
+    finally:
+        db.close()
