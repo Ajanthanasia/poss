@@ -7,10 +7,10 @@ from app.controllers.admin_owners_controller import (
     delete_owner
 )
 from app.controllers.shop_controller import get_owners
-from app.controllers.owner_shop_controller import test
+from app.controllers.owner_shop_controller import test, add_shop
 import traceback
 
-ownerRoute = Blueprint('owner', __name__, url_prefix='/api/owns')  # same prefix as before
+ownerRoute = Blueprint('owner', __name__, url_prefix='/api/owns')
 
 
 @ownerRoute.route('/test', methods=['GET'])
@@ -22,3 +22,14 @@ def test_route():
     except Exception as e:
         traceback.print_exc()
         return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@ownerRoute.route('/add-shop', methods=['POST'])
+@auth_middleware
+def add_shop_route():
+    try:
+        response = add_shop()
+        return response
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'status': False, 'message': str(e)}), 500

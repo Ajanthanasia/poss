@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 from app.controllers.admin_shops_controller import (
-    list_shops, add_shop, get_shop_by_id, update_shop, delete_shop, search_shops, get_owners_list
+    list_shops, add_shop, get_shop_by_id, update_shop, delete_shop, search_shops, get_owners_list, update_shop_status
 )
 from app.controllers.admin_owners_controller import (
     index_owners, get_owner, store_owner_with_token, delete_owner
@@ -57,6 +57,15 @@ def route_get_owners_list(): return get_owners_list()
 def route_get_shops_by_owner(owner_id):
     from app.controllers.admin_shops_controller import get_shops_by_owner
     return get_shops_by_owner(owner_id)
+
+@adminRoute.route('/shop/update-status/<int:shop_id>', methods=['PUT'])
+def update_status_route(shop_id):
+    try:
+        response = update_shop_status(shop_id)
+        return response
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'status': False, 'message': str(e)}), 500
 
 # ----------------- OWNERS -----------------
 @adminRoute.route('/owners', methods=['GET'])

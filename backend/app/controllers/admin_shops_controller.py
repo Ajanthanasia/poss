@@ -133,7 +133,7 @@ def search_shops(name_query=''):
                 "owner": s.owner.name if s.owner else "Unknown",
                 "status": "active" if s.status_id == 2 else "inactive"
             })
-        return jsonify({'status': True, 'message': 'Success', 'data': data}), 200
+        return jsonify(data), 200  # Return plain array like get_owners_list
     except Exception as e:
         traceback.print_exc()
         return jsonify({'status': False, 'message': str(e)}), 500

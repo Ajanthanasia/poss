@@ -22,15 +22,15 @@ export default function ShopsListComponent() {
   };
 
   const handleSearch = async () => {
-    try {
-      const res = await fetch(`http://localhost:5000/api/shop/search?name=${encodeURIComponent(searchTerm)}`);
-      const data = await res.json();
-      setShops(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error("Search failed:", error);
-      setShops([]);
-    }
-  };
+  try {
+    const res = await fetch(`http://localhost:5000/api/shop/search?name=${encodeURIComponent(searchTerm)}`);
+    const data = await res.json();
+    setShops(Array.isArray(data) ? data : []);
+  } catch (error) {
+    console.error("Search failed:", error);
+    setShops([]);
+  }
+};
 
   const handleDelete = async (shopId) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this shop?");
@@ -56,6 +56,42 @@ export default function ShopsListComponent() {
   const handleView = (shop) => {
     setSelectedShop(shop);
     setIsViewModalOpen(true);
+  };
+
+  const handleAccept = async () => {
+    if (!selectedShop) return;
+
+    try {
+      const res = await axios.put(`http://localhost:5000/api/shop/update-status/${selectedShop.id}`);
+      
+      if (res.data.status) {
+        // Update the shop in the list
+        setShops((prev) =>
+          prev.map((shop) =>
+            shop.id === selectedShop.id ? { ...shop, status_id: 2 } : shop
+          )
+        );
+        
+        // Update selected shop
+        setSelectedShop({ ...selectedShop, status_id: 2 });
+        
+        alert("✅ Shop accepted successfully!");
+      } else {
+        alert("❌ Failed to accept shop: " + res.data.error);
+      }
+    } catch (error) {
+      console.error("Accept error:", error);
+      alert("❌ Something went wrong while accepting.");
+    }
+  };
+
+  const handleReject = () => {
+    const confirmReject = window.confirm("Are you sure you want to reject this shop?");
+    if (confirmReject) {
+      // You can implement reject logic here (e.g., delete or set status to rejected)
+      alert("❌ Shop rejected");
+      setIsViewModalOpen(false);
+    }
   };
 
   useEffect(() => {
@@ -164,55 +200,58 @@ export default function ShopsListComponent() {
             <p className="text-gray-500">No shops found.</p>
           )}
         </div>
-{/* View Modal */}
-{isViewModalOpen && selectedShop?.id && (
-  <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-    <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative">
-      <button
-        onClick={() => setIsViewModalOpen(false)}
-        className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-      >
-        ✖
-      </button>
-      <h2 className="text-xl font-semibold mb-4">Shop Details</h2>
-      <div className="space-y-2 text-sm text-gray-700">
-       <p><strong>ID:</strong> {selectedShop.id}</p>
-<p><strong>Name:</strong> {selectedShop.name}</p>
-<p><strong>Owner:</strong> {selectedShop.owner?.name || "Unknown"}</p>
-<p><strong>Email:</strong> {selectedShop.email}</p>
-<p><strong>Location:</strong> {selectedShop.location}</p>
-<p>
-  <strong>Status:</strong>{" "}
-  {selectedShop.status_id === 2 ? (
-    <span className="text-green-600 font-semibold">Active</span>
-  ) : selectedShop.status_id === 1 ? (
-    <span className="text-yellow-600 font-semibold">Pending</span>
-  ) : (
-    <span className="text-gray-600">Unknown</span>
-  )}
-</p>
 
+        {/* View Modal */}
+        {isViewModalOpen && selectedShop?.id && (
+          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative">
+              <button
+                onClick={() => setIsViewModalOpen(false)}
+                className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              >
+                ✖
+              </button>
+              <h2 className="text-xl font-semibold mb-4">Shop Details</h2>
+              <div className="space-y-2 text-sm text-gray-700">
+                <p><strong>ID:</strong> {selectedShop.id}</p>
+                <p><strong>Name:</strong> {selectedShop.name}</p>
+                <p><strong>Owner:</strong> {selectedShop.owner?.name || "Unknown"}</p>
+                <p><strong>Email:</strong> {selectedShop.email}</p>
+                <p><strong>Address:</strong> {selectedShop.address}</p>
+                <p><strong>City:</strong> {selectedShop.city}</p>
+                <p><strong>District:</strong> {selectedShop.district}</p>
+                <p><strong>Country:</strong> {selectedShop.country}</p>
+                <p>
+                  <strong>Status:</strong>{" "}
+                  {selectedShop.status_id === 2 ? (
+                    <span className="text-green-600 font-semibold">Active</span>
+                  ) : selectedShop.status_id === 1 ? (
+                    <span className="text-yellow-600 font-semibold">Pending</span>
+                  ) : (
+                    <span className="text-gray-600">Unknown</span>
+                  )}
+                </p>
 
-        {selectedShop.status_id === 1 && (
-          <div className="mt-6 flex justify-center gap-4">
-            <button
-              className="px-4 py-1.5 bg-green-600 text-white rounded hover:bg-green-700 text-sm font-medium"
-              onClick={() => alert("✅ Accept clicked")}
-            >
-              Accept
-            </button>
-            <button
-              className="px-4 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 text-sm font-medium"
-              onClick={() => alert("❌ Reject clicked")}
-            >
-              Reject
-            </button>
+                {selectedShop.status_id === 1 && (
+                  <div className="mt-6 flex justify-center gap-4">
+                    <button
+                      className="px-4 py-1.5 bg-green-600 text-white rounded hover:bg-green-700 text-sm font-medium"
+                      onClick={handleAccept}
+                    >
+                      Accept
+                    </button>
+                    <button
+                      className="px-4 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 text-sm font-medium"
+                      onClick={handleReject}
+                    >
+                      Reject
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         )}
-      </div>
-    </div>
-  </div>
-)}
       </div>
     </AdminLayout>
   );
