@@ -153,6 +153,7 @@ def get_owners_list():
     finally:
         db.close()
 
+
 def get_shops_by_owner(owner_id):
     db = SessionLocal()
     try:
@@ -166,7 +167,7 @@ def get_shops_by_owner(owner_id):
                 "city": shop.city,
                 "district": shop.district,
                 "country": shop.country,
-                "status_id": shop.status_id,             # <-- add this
+                "status_id": shop.status_id,
                 "status": "active" if shop.status_id == 2 else "inactive"
             }
             for shop in shops
@@ -175,5 +176,34 @@ def get_shops_by_owner(owner_id):
     except Exception as e:
         traceback.print_exc()
         return jsonify({'status': False, 'message': str(e)}), 500
+    finally:
+        db.close()
+
+
+# -------------------- New function --------------------
+def update_shop_status(shop_id):
+    db = SessionLocal()
+    try:
+        shop = db.query(Shop).filter(Shop.id == shop_id).first()
+        if not shop:
+            return jsonify({"status": False, "error": "Shop not found"}), 404
+
+        if shop.status_id == 1:  # Pending
+            shop.status_id = 2  # Active
+            db.commit()
+            return jsonify({
+                "status": True,
+                "message": "Shop status updated successfully",
+                "shop": shop.to_dict()
+            }), 200
+        else:
+            return jsonify({
+                "status": False,
+                "error": "Shop is not in pending status"
+            }), 400
+    except Exception as e:
+        db.rollback()
+        traceback.print_exc()
+        return jsonify({"status": False, "error": str(e)}), 500
     finally:
         db.close()
