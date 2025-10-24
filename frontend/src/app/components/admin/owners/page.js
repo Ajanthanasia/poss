@@ -16,6 +16,24 @@ export default function OwnersListPage() {
   const [messageType, setMessageType] = useState('success')
   const [selectedOwner, setSelectedOwner] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+
+  const handleSearch = async () => {
+    try {
+      const res = await fetch(`${apiUrl}/api/search-owners?query=${encodeURIComponent(searchQuery)}`);
+      const data = await res.json()
+      if (res.ok && data.status) {
+        setOwners(data.data)
+      } else {
+        setMessageType('error')
+        setMessage(data.message || 'Search failed')
+      }
+    } catch (err) {
+      console.error(err)
+      setMessageType('error')
+      setMessage('Something went wrong during search')
+    }
+  }
 
   // 🔗 Navigate to Add Owner Form
   const handleAddNewOwner = () => {
@@ -29,7 +47,7 @@ export default function OwnersListPage() {
         headers: { 'Authorization': `Bearer ${token}` }
       })
       const data = await res.json()
-      if (res.ok) {
+      if (res.ok && data.status) {
         setOwners(data.data)
       } else {
         setMessageType('error')
@@ -65,7 +83,7 @@ export default function OwnersListPage() {
         headers: { 'Authorization': `Bearer ${token}` }
       })
       const data = await res.json()
-      if (res.ok) {
+      if (res.ok && data.status) {
         setOwners(owners.filter(o => o.id !== ownerId))
         setMessageType('success')
         setMessage(data.message)
@@ -102,10 +120,32 @@ export default function OwnersListPage() {
               Add Owner
             </button>
           </div>
+          
+          {/* Search Bar */}
+          <div className="flex items-center gap-2 mb-4">
+            <input
+              type="text"
+              placeholder="Search by name or email"
+              className="px-3 py-2 border rounded w-full max-w-sm focus:outline-none focus:ring focus:border-blue-300"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  handleSearch()
+                }
+              }}
+            />
+            <button
+              onClick={handleSearch}
+              className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition"
+            >
+              Search
+            </button>
+          </div>
 
-          {/* Success/Error message */}
-          {message && (
-            <div className={`mb-4 p-3 text-center rounded ${messageType === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>
+          {/* Error message only */}
+          {message && messageType === 'error' && (
+            <div className="mb-4 p-3 text-center rounded bg-red-500 text-white">
               {message}
             </div>
           )}
