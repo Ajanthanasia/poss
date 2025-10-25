@@ -1,9 +1,10 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
+import traceback
 from app.controllers.admin_shops_controller import (
     list_shops, add_shop, get_shop_by_id, update_shop, delete_shop, search_shops, get_owners_list, update_shop_status
 )
 from app.controllers.admin_owners_controller import (
-    index_owners, get_owner, store_owner_with_token, delete_owner
+    index_owners, get_owner, store_owner_with_token, delete_owner, search_owners
 )
 from app.controllers.login_controller import register_admin, login_user
 from app.controllers.profile_controller import update_profile, get_profile
@@ -31,19 +32,24 @@ def profile_get():
 
 # ----------------- SHOPS -----------------
 @adminRoute.route('/shop/list', methods=['GET'])
-def route_list_shops(): return list_shops()
+def route_list_shops():
+    return list_shops()
 
 @adminRoute.route('/shop/add', methods=['POST'])
-def route_add_shop(): return add_shop(request.get_json())
+def route_add_shop():
+    return add_shop(request.get_json())
 
 @adminRoute.route('/shop/<int:shop_id>', methods=['GET'])
-def route_get_shop(shop_id): return get_shop_by_id(shop_id)
+def route_get_shop(shop_id):
+    return get_shop_by_id(shop_id)
 
 @adminRoute.route('/shop/update/<int:shop_id>', methods=['PUT'])
-def route_update_shop(shop_id): return update_shop(shop_id, request.get_json())
+def route_update_shop(shop_id):
+    return update_shop(shop_id, request.get_json())
 
 @adminRoute.route('/shop/delete/<int:shop_id>', methods=['DELETE'])
-def route_delete_shop(shop_id): return delete_shop(shop_id)
+def route_delete_shop(shop_id):
+    return delete_shop(shop_id)
 
 @adminRoute.route('/shop/search', methods=['GET'])
 def route_search_shops():
@@ -51,7 +57,8 @@ def route_search_shops():
     return search_shops(name_query)
 
 @adminRoute.route('/shop/owners', methods=['GET'])
-def route_get_owners_list(): return get_owners_list()
+def route_get_owners_list():
+    return get_owners_list()
 
 @adminRoute.route('/shop/owner/<int:owner_id>', methods=['GET'])
 def route_get_shops_by_owner(owner_id):
@@ -91,3 +98,7 @@ def route_store_owner_frontend():
 @adminRoute.route('/delete-owner/<int:owner_id>', methods=['DELETE'])
 def route_delete_owner_frontend(owner_id):
     return delete_owner(owner_id)
+
+@adminRoute.route('/search-owners', methods=['GET'])
+def route_search_owners():
+    return search_owners()
