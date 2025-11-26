@@ -12,6 +12,10 @@ export default function ShopsListComponent() {
   const [shops, setShops] = useState([]);
   const [selectedShop, setSelectedShop] = useState(null);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
+  const [total, setTotal] = useState(0);
+  const perPage = 5; 
 
   const handleAddNewShop = () => {
     router.push("/components/admin/shop-add-form");
@@ -21,11 +25,18 @@ export default function ShopsListComponent() {
     router.push(`/components/admin/shop-edit-form?id=${shopId}`);
   };
 
-  const handleSearch = async () => {
+  const handleSearch = async (pageNum = 1) => {
   try {
-    const res = await fetch(`http://localhost:5000/api/shop/search?name=${encodeURIComponent(searchTerm)}`);
+    const res = await fetch(`http://localhost:5000/api/shop/search?name=${encodeURIComponent(searchTerm)}&page=${pageNum}&per_page=${perPage}`);
     const data = await res.json();
-    setShops(Array.isArray(data) ? data : []);
+    if (data.status) {
+      setShops(data.data);
+      setPage(data.page);
+      setPages(data.pages);
+      setTotal(data.total);
+    } else {
+      setShops([]);
+    }
   } catch (error) {
     console.error("Search failed:", error);
     setShops([]);
@@ -94,24 +105,24 @@ export default function ShopsListComponent() {
     }
   };
 
-  useEffect(() => {
-    const fetchShops = async () => {
-      try {
-        const res = await axios.get("http://localhost:5000/api/shop/list");
-        console.log(res);
-        console.log(res.data);
-        if (res.data.status == true) {
-          console.log(res.data.data);
-          setShops(res.data.data);
-        }
-      } catch (error) {
-        console.error("Error fetching shops:", error);
-        setShops([]);
-      }
-    };
+  const fetchShops = async (pageNum = 1) => {
+  try {
+    const res = await axios.get(`http://localhost:5000/api/shop/list?page=${pageNum}&per_page=${perPage}`);
+    if (res.data.status) {
+      setShops(res.data.data);
+      setPage(res.data.page);
+      setPages(res.data.pages);
+      setTotal(res.data.total);
+    }
+  } catch (error) {
+    console.error("Error fetching shops:", error);
+    setShops([]);
+  }
+};
 
-    fetchShops();
-  }, []);
+    useEffect(() => {
+  fetchShops(page);
+}, [page]);
 
   return (
     <AdminLayout>
@@ -196,10 +207,28 @@ export default function ShopsListComponent() {
                 ))}
               </tbody>
             </table>
+            
           ) : (
             <p className="text-gray-500">No shops found.</p>
           )}
-        </div>
+        </div>{/* Pagination controls */}
+<div className="flex justify-between items-center mt-4">
+  <button
+    disabled={page === 1}
+    onClick={() => setPage(page - 1)}
+    className="px-3 py-1 bg-gray-600 text-white rounded disabled:opacity-50"
+  >
+    Prev
+  </button>
+  <span>Page {page} of {pages} (Total: {total})</span>
+  <button
+    disabled={page === pages}
+    onClick={() => setPage(page + 1)}
+    className="px-3 py-1 bg-gray-600 text-white rounded disabled:opacity-50"
+  >
+    Next
+  </button>
+</div>
 
         {/* View Modal */}
         {isViewModalOpen && selectedShop?.id && (

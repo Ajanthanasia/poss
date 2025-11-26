@@ -64,9 +64,17 @@ def store_owner_with_token(data, admin_id=1):
 
 def index_owners():
     try:
-        owners = User.query.filter_by(role_id=2, status_id=2).all()
+        # Get page and per_page from query params, default to 1 and 10
+        page = int(request.args.get('page', 1))
+        per_page = int(request.args.get('per_page', 10))
+
+        owners_query = User.query.filter_by(role_id=2, status_id=2)
+
+        # Use paginate if Flask-SQLAlchemy
+        owners = owners_query.paginate(page=page, per_page=per_page, error_out=False)
+
         data = []
-        for o in owners:
+        for o in owners.items:
             data.append({
                 'id': o.id,
                 'name': o.name,
@@ -74,7 +82,16 @@ def index_owners():
                 'contact': o.profile.contact if o.profile else '',
                 'country_code': o.profile.country_code if o.profile else ''
             })
-        return jsonify({'status': True, 'message': 'Success', 'data': data}), 200
+
+        return jsonify({
+            'status': True,
+            'message': 'Success',
+            'data': data,
+            'page': owners.page,
+            'pages': owners.pages,
+            'total': owners.total
+        }), 200
+
     except Exception as e:
         traceback.print_exc()
         return jsonify({'status': False, 'message': str(e)}), 500
@@ -116,6 +133,9 @@ def search_owners():
     db = SessionLocal()
     try:
         query_param = request.args.get('query', '').strip().lower()
+        page = int(request.args.get('page', 1))
+        per_page = int(request.args.get('per_page', 10))
+
         query = db.query(User).filter(User.role_id == 2)  # Only owners
 
         if query_param:
@@ -124,7 +144,9 @@ def search_owners():
                 (User.email.ilike(f"%{query_param}%"))
             )
 
-        users = query.all()
+        total = query.count()
+        users = query.offset((page - 1) * per_page).limit(per_page).all()
+
         data = [{
             "id": u.id,
             "name": u.name,
@@ -133,11 +155,18 @@ def search_owners():
             "country_code": u.profile.country_code if u.profile else ''
         } for u in users]
 
-        return jsonify({'status': True, 'message': 'Success', 'data': data}), 200
+        return jsonify({
+            'status': True,
+            'message': 'Success',
+            'data': data,
+            'page': page,
+            'per_page': per_page,
+            'total': total,
+            'pages': (total + per_page - 1) // per_page  # ceil division
+        }), 200
 
     except Exception as e:
         traceback.print_exc()
         return jsonify({'status': False, 'message': str(e)}), 500
-
     finally:
         db.close()
