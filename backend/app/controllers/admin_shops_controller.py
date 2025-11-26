@@ -10,14 +10,30 @@ from sqlalchemy.orm import joinedload
 def list_shops():
     db = SessionLocal()
     try:
-        shopData = db.query(Shop).all()
+        # Get page and per_page from query params
+        page = int(request.args.get("page", 1))
+        per_page = int(request.args.get("per_page", 10))
+
+        query = db.query(Shop)
+        total = query.count()
+
+        shopData = query.offset((page - 1) * per_page).limit(per_page).all()
+
         shops = []
         for shop in shopData:
             shop_dict = shop.to_dict()
             full_address = f"{shop.address}, {shop.city}, {shop.district}, {shop.country}"
             shop_dict["full_address"] = full_address
             shops.append(shop_dict)
-        return jsonify({'status': True, 'data': shops}), 200
+
+        return jsonify({
+            'status': True,
+            'data': shops,
+            'page': page,
+            'per_page': per_page,
+            'total': total,
+            'pages': (total + per_page - 1) // per_page  # ceil division
+        }), 200
     except Exception as e:
         print(f"Error in list_shops: {e}")
         return jsonify({'status': False, 'message': 'Whoops! Something went wrong'}), 500
@@ -118,10 +134,15 @@ def delete_shop(shop_id):
 def search_shops(name_query=''):
     db = SessionLocal()
     try:
+        page = int(request.args.get("page", 1))
+        per_page = int(request.args.get("per_page", 10))
+
         query = db.query(Shop).options(joinedload(Shop.owner))
         if name_query:
             query = query.filter(Shop.name.ilike(f"%{name_query}%"))
-        shops = query.all()
+
+        total = query.count()
+        shops = query.offset((page - 1) * per_page).limit(per_page).all()
 
         data = []
         for s in shops:
@@ -133,13 +154,20 @@ def search_shops(name_query=''):
                 "owner": s.owner.name if s.owner else "Unknown",
                 "status": "active" if s.status_id == 2 else "inactive"
             })
-        return jsonify(data), 200  # Return plain array like get_owners_list
+
+        return jsonify({
+            'status': True,
+            'data': data,
+            'page': page,
+            'per_page': per_page,
+            'total': total,
+            'pages': (total + per_page - 1) // per_page
+        }), 200
     except Exception as e:
         traceback.print_exc()
         return jsonify({'status': False, 'message': str(e)}), 500
     finally:
         db.close()
-
 
 def get_owners_list():
     db = SessionLocal()

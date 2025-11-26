@@ -17,54 +17,63 @@ export default function OwnersListPage() {
   const [selectedOwner, setSelectedOwner] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [page, setPage] = useState(1)
+  const [pages, setPages] = useState(1)
+  const [total, setTotal] = useState(0)
 
-  const handleSearch = async () => {
-    try {
-      const res = await fetch(`${apiUrl}/api/search-owners?query=${encodeURIComponent(searchQuery)}`);
-      const data = await res.json()
-      if (res.ok && data.status) {
-        setOwners(data.data)
-      } else {
-        setMessageType('error')
-        setMessage(data.message || 'Search failed')
-      }
-    } catch (err) {
-      console.error(err)
+  const handleSearch = async (pageNum = 1) => {
+  try {
+    const res = await fetch(`${apiUrl}/api/search-owners?query=${encodeURIComponent(searchQuery)}&page=${pageNum}&per_page=5`)
+    const data = await res.json()
+    if (res.ok && data.status) {
+      setOwners(data.data)
+      setPage(data.page)
+      setPages(data.pages)
+      setTotal(data.total)
+    } else {
       setMessageType('error')
-      setMessage('Something went wrong during search')
+      setMessage(data.message || 'Search failed')
     }
+  } catch (err) {
+    console.error(err)
+    setMessageType('error')
+    setMessage('Something went wrong during search')
   }
+}
 
   // 🔗 Navigate to Add Owner Form
   const handleAddNewOwner = () => {
     router.push("/components/admin/owner-add-form")
   }
 
-  const fetchOwners = async () => {
-    try {
-      const token = localStorage.getItem('token')
-      const res = await fetch(`${apiUrl}/api/index-owners`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      })
-      const data = await res.json()
-      if (res.ok && data.status) {
-        setOwners(data.data)
-      } else {
-        setMessageType('error')
-        setMessage(data.message || 'Failed to load owners')
-      }
-    } catch (err) {
-      console.error(err)
+  const fetchOwners = async (pageNum = 1) => {
+  try {
+    const token = localStorage.getItem('token')
+    const res = await fetch(`${apiUrl}/api/index-owners?page=${pageNum}&per_page=5`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+    const data = await res.json()
+    if (res.ok && data.status) {
+      setOwners(data.data)
+      setPage(data.page)
+      setPages(data.pages)
+      setTotal(data.total)
+    } else {
       setMessageType('error')
-      setMessage('Something went wrong')
-    } finally {
-      setLoading(false)
+      setMessage(data.message || 'Failed to load owners')
     }
+  } catch (err) {
+    console.error(err)
+    setMessageType('error')
+    setMessage('Something went wrong')
+  } finally {
+    setLoading(false)
   }
+}
 
-  useEffect(() => {
-    fetchOwners()
-  }, [])
+useEffect(() => {
+  fetchOwners(page)
+}, [page])
 
   useEffect(() => {
     if (message) {
@@ -199,6 +208,23 @@ export default function OwnersListPage() {
                   ))}
                 </tbody>
               </table>
+              <div className="flex justify-between items-center mt-4">
+  <button
+    disabled={page === 1}
+    onClick={() => setPage(page - 1)}
+    className="px-3 py-1 bg-gray-600 text-white rounded disabled:opacity-50"
+  >
+    Prev
+  </button>
+  <span>Page {page} of {pages} (Total: {total})</span>
+  <button
+    disabled={page === pages}
+    onClick={() => setPage(page + 1)}
+    className="px-3 py-1 bg-gray-600 text-white rounded disabled:opacity-50"
+  >
+    Next
+  </button>
+</div>
             </div>
           )}
         </main>
