@@ -22,24 +22,25 @@ export default function OwnersListPage() {
   const [total, setTotal] = useState(0)
 
   const handleSearch = async (pageNum = 1) => {
-  try {
-    const res = await fetch(`${apiUrl}/api/search-owners?query=${encodeURIComponent(searchQuery)}&page=${pageNum}&per_page=5`)
-    const data = await res.json()
-    if (res.ok && data.status) {
-      setOwners(data.data)
-      setPage(data.page)
-      setPages(data.pages)
-      setTotal(data.total)
-    } else {
+    try {
+      const res = await fetch(`${apiUrl}/api/search-owners?query=${encodeURIComponent(searchQuery)}&page=${pageNum}&per_page=5`)
+      const data = await res.json()
+      if (res.ok && data.status) {
+        console.log(res);
+        setOwners(data.data)
+        setPage(data.page)
+        setPages(data.pages)
+        setTotal(data.total)
+      } else {
+        setMessageType('error')
+        setMessage(data.message || 'Search failed')
+      }
+    } catch (err) {
+      console.error(err)
       setMessageType('error')
-      setMessage(data.message || 'Search failed')
+      setMessage('Something went wrong during search')
     }
-  } catch (err) {
-    console.error(err)
-    setMessageType('error')
-    setMessage('Something went wrong during search')
   }
-}
 
   // 🔗 Navigate to Add Owner Form
   const handleAddNewOwner = () => {
@@ -47,33 +48,33 @@ export default function OwnersListPage() {
   }
 
   const fetchOwners = async (pageNum = 1) => {
-  try {
-    const token = localStorage.getItem('token')
-    const res = await fetch(`${apiUrl}/api/index-owners?page=${pageNum}&per_page=5`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
-    const data = await res.json()
-    if (res.ok && data.status) {
-      setOwners(data.data)
-      setPage(data.page)
-      setPages(data.pages)
-      setTotal(data.total)
-    } else {
+    try {
+      const token = localStorage.getItem('token')
+      const res = await fetch(`${apiUrl}/api/index-owners?page=${pageNum}&per_page=5`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      const data = await res.json()
+      if (res.ok && data.status) {
+        setOwners(data.data)
+        setPage(data.page)
+        setPages(data.pages)
+        setTotal(data.total)
+      } else {
+        setMessageType('error')
+        setMessage(data.message || 'Failed to load owners')
+      }
+    } catch (err) {
+      console.error(err)
       setMessageType('error')
-      setMessage(data.message || 'Failed to load owners')
+      setMessage('Something went wrong')
+    } finally {
+      setLoading(false)
     }
-  } catch (err) {
-    console.error(err)
-    setMessageType('error')
-    setMessage('Something went wrong')
-  } finally {
-    setLoading(false)
   }
-}
 
-useEffect(() => {
-  fetchOwners(page)
-}, [page])
+  useEffect(() => {
+    fetchOwners(page)
+  }, [page])
 
   useEffect(() => {
     if (message) {
@@ -129,7 +130,7 @@ useEffect(() => {
               Add Owner
             </button>
           </div>
-          
+
           {/* Search Bar */}
           <div className="flex items-center gap-2 mb-4">
             <input
@@ -209,22 +210,26 @@ useEffect(() => {
                 </tbody>
               </table>
               <div className="flex justify-between items-center mt-4">
-  <button
-    disabled={page === 1}
-    onClick={() => setPage(page - 1)}
-    className="px-3 py-1 bg-gray-600 text-white rounded disabled:opacity-50"
-  >
-    Prev
-  </button>
-  <span>Page {page} of {pages} (Total: {total})</span>
-  <button
-    disabled={page === pages}
-    onClick={() => setPage(page + 1)}
-    className="px-3 py-1 bg-gray-600 text-white rounded disabled:opacity-50"
-  >
-    Next
-  </button>
-</div>
+                <span class="inline-flex items-center px-2 py-1 ring-1 ring-inset ring-brand-subtle text-fg-brand-strong text-black text-sm font-medium rounded bg-brand-softer">
+                  Page {page} of {pages} (Total : {total})
+                </span>
+              </div>
+              <div className="flex justify-between items-center mt-4">
+                <button
+                  disabled={page === 1}
+                  onClick={() => setPage(page - 1)}
+                  className="px-3 py-1 bg-gray-600 text-white rounded disabled:opacity-50"
+                >
+                  Prev
+                </button>
+                <button
+                  disabled={page === pages}
+                  onClick={() => setPage(page + 1)}
+                  className="px-3 py-1 bg-gray-600 text-white rounded disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </div>
             </div>
           )}
         </main>
