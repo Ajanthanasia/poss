@@ -210,7 +210,7 @@ export default function OwnersListPage() {
                 </tbody>
               </table>
               <div className="flex justify-between items-center mt-4">
-                <span class="inline-flex items-center px-2 py-1 ring-1 ring-inset ring-brand-subtle text-fg-brand-strong text-black text-sm font-medium rounded bg-brand-softer">
+                <span className="inline-flex items-center px-2 py-1 ring-1 ring-inset ring-brand-subtle text-fg-brand-strong text-black text-sm font-medium rounded bg-brand-softer">
                   Page {page} of {pages} (Total : {total})
                 </span>
               </div>
