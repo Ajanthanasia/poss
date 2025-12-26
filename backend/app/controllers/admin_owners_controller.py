@@ -26,15 +26,19 @@ def store_owner_with_token(data, admin_id=1):
             owner.name = name
             owner.email = email
             if password:
-                owner.password = generate_password_hash(password)
+                owner.password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=16)
         else:
             existing_owner = User.query.filter_by(email=email).first()
             if existing_owner:
                 return jsonify({'status': False, 'message': 'Owner with this email already exists'}), 400
+            
+            # Hash password
+            hashed_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=16)
+            
             owner = User(
                 name=name,
                 email=email,
-                password=generate_password_hash(password),
+                password=hashed_password,
                 role_id=2,
                 status_id=2,
                 api_token=secrets.token_urlsafe(64)
