@@ -60,9 +60,18 @@ export default function OwnerDashboard() {
   return (
     <OwnerLayout showSidebar={false}>
       <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-start gap-8 p-6">
-        <h1 className="text-xl font-bold text-black self-start">
-          Hi, Owner — Welcome to our POS System
-        </h1>
+        {/* Header with button on right */}
+        <div className="w-full flex justify-between items-center">
+          <h1 className="text-xl font-bold text-black">
+            Hi, Owner — Welcome to our POS System
+          </h1>
+          <button
+            onClick={() => router.push("/components/owner/views/addShop")}
+            className="px-5 py-2 bg-green-700 text-white font-medium rounded-lg shadow hover:bg-green-800 transition-all"
+          >
+            ➕ Add New Shop
+          </button>
+        </div>
 
         {shops.length === 0 ? (
           <div className="flex flex-col items-center justify-center mt-20 bg-white rounded-lg shadow-md p-10">
