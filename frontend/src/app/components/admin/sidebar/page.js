@@ -9,11 +9,13 @@ export default function AdminSidebar({ role = 'admin' }) {
         ? [
             { name: 'Owners', icon: HomeIcon, path: '/components/admin/owners' },
             { name: 'Shops', icon: BuildingStorefrontIcon, path: '/components/admin/shops/index' },
-          ]
+            { name: 'Employees', icon: UsersIcon, path: '/components/admin/employee' },
+
+        ]
         : [
             { name: 'Employees', icon: UsersIcon, path: '/components/owner/employees' },
             { name: 'Products', icon: ShoppingBagIcon, path: '/components/owner/products' },
-          ]
+        ]
 
     return (
         <div className="h-screen w-64 bg-gray-800 text-white flex flex-col p-4">
