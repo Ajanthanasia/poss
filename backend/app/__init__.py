@@ -23,10 +23,12 @@ def create_app():
     from app.routes.admin import adminRoute
     from app.routes.auth import auth_bp
     from app.routes.owner import ownerRoute   # <-- register owner blueprint
+    from app.routes.employee import employeeRoute
 
     app.register_blueprint(adminRoute)
     app.register_blueprint(auth_bp)
     app.register_blueprint(ownerRoute)
+    app.register_blueprint(employeeRoute)
 
     # Simple test route
     @app.route("/ping")
