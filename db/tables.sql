@@ -71,7 +71,7 @@ CREATE TABLE
     );
 
 CREATE TABLE
-    shop_items (
+    products (
         id INT AUTO_INCREMENT PRIMARY KEY,
         shop_id INT NOT NULL,
         name VARCHAR(127) NULL DEFAULT NULL,
@@ -101,7 +101,7 @@ CREATE TABLE
     sale_items (
         id INT AUTO_INCREMENT PRIMARY KEY,
         sale_id INT NOT NULL,
-        shop_item_id INT NOT NULL,
+        product_id INT NOT NULL,
         qty INT NULL DEFAULT NULL,
         price DECIMAL(10, 2) NULL DEFAULT NULL,
         total DECIMAL(10, 2) NULL DEFAULT NULL,
