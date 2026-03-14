@@ -17,7 +17,6 @@ export default function ProductsPage() {
     price: "",
     qty: "",
     status_id: 1,
-    creator_id: 1,
   });
 
   const fetchProducts = async () => {
@@ -80,8 +79,7 @@ export default function ProductsPage() {
         description: "",
         price: "",
         qty: "",
-        status_id: 1,
-        creator_id: 1,
+        status_id: 1
       });
       setEditingProduct(null);
       setIsFormOpen(false);
@@ -131,8 +129,7 @@ export default function ProductsPage() {
       description: "",
       price: "",
       qty: "",
-      status_id: 1,
-      creator_id: 1,
+      status_id: 1
     });
     setEditingProduct(null);
     setIsFormOpen(false);

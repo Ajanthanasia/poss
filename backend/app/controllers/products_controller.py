@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify,g
 from app import db
 from app.models.product import Product
 
@@ -12,7 +12,7 @@ def create_product():
         price=data.get('price'),
         qty=data.get('qty'),
         status_id=data.get('status_id'),
-        creator_id=data.get('creator_id')
+        creator_id=g.auth_user.id
     )
     db.session.add(product)
     db.session.commit()
