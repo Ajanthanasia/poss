@@ -118,6 +118,7 @@ def login_user(data):
         # ✅ Create JWT token using your generate_jwt service
         access_token = generate_jwt(user.id, user.name)
         user.api_token = access_token
+        db.add(user)
         db.commit()
 
         return jsonify({
