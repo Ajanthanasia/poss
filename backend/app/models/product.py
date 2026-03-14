@@ -1,8 +1,8 @@
 # models/shop_item.py
 from app import db
 
-class ShopItem(db.Model):
-    __tablename__ = 'shop_items'
+class Product(db.Model):
+    __tablename__ = 'products'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     shop_id = db.Column(db.Integer, nullable=False)
