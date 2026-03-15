@@ -46,7 +46,7 @@ def add_shop_route():
 def create_product_route():
     return products_controller.create_product()
 
-@ownerRoute.route('/products', methods=['GET'])
+@ownerRoute.route('/products-list', methods=['POST'])
 @auth_middleware
 def get_products_route():
     return products_controller.get_products()
