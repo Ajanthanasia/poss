@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import OwnerLayout from "../../layouts/page"; 
+import Link from 'next/link';
+import OwnerLayout from "../../layouts/page";
 
 export default function ProductsPage() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
-  
+
   const [products, setProducts] = useState([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
@@ -40,14 +41,14 @@ export default function ProductsPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       const token = localStorage.getItem("token");
-      
+
       if (editingProduct) {
         await fetch(`${apiUrl}/api/owns/products/${editingProduct.id}`, {
           method: "PUT",
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
@@ -60,7 +61,7 @@ export default function ProductsPage() {
       } else {
         await fetch(`${apiUrl}/api/owns/products`, {
           method: "POST",
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
@@ -71,7 +72,7 @@ export default function ProductsPage() {
           }),
         });
       }
-      
+
       setForm({
         shop_id: 1,
         name: "",
@@ -108,7 +109,7 @@ export default function ProductsPage() {
     if (confirm("Are you sure you want to delete this product?")) {
       try {
         const token = localStorage.getItem("token");
-        await fetch(`${apiUrl}/api/owns/products/${id}`, { 
+        await fetch(`${apiUrl}/api/owns/products/${id}`, {
           method: "DELETE",
           headers: {
             "Authorization": `Bearer ${token}`
@@ -140,12 +141,14 @@ export default function ProductsPage() {
       <div className="min-h-screen bg-gray-100 flex flex-col items-start justify-start gap-6 p-6">
         <div className="w-full flex items-center justify-between">
           <h1 className="text-2xl font-bold text-black">Products List</h1>
-          <button
-            onClick={() => setIsFormOpen(true)}
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
-          >
-            + Add Product
-          </button>
+          <Link href="/components/owner/products/addProduct">
+            <button
+              // onClick={() => setIsFormOpen(true)}
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            >
+              + Add Product
+            </button>
+          </Link>
         </div>
 
         {isFormOpen && (

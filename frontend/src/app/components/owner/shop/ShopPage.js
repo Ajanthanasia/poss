@@ -1,10 +1,14 @@
- // src/components/owner/shop/ShopPage.js
+// src/components/owner/shop/ShopPage.js
 'use client';
 
 import React from "react";
 import OwnerLayout from "../layouts/page"; // adjust path if needed
+import { useParams } from "next/navigation";
 
-export default function ShopPage() {
+export default function ShopPage({ params }) {
+  // const params = useParams();
+  const id = params;
+  console.log(id);
   return (
     <OwnerLayout>
       {/* The layout already contains header + sidebar */}
