@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import ShopPage from "../../../components/owner/shop/ShopPage"; // default export
+import ShopPage from "../../../components/owner/shop/page"; // default export
 
 export default function Page({ params: paramsPromise }) {
   const params = React.use(paramsPromise); // unwrap Next.js 15 params

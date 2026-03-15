@@ -2,10 +2,16 @@
 
 import { useState, useEffect } from "react";
 import Link from 'next/link';
+import { useSearchParams } from "next/navigation";
 import OwnerLayout from "../../layouts/page";
+import axios from "axios";
 
 export default function ProductsPage() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
+  const searchParams = useSearchParams();
+
+  // Get the id from query string
+  const shopId = searchParams.get("id");
 
   const [products, setProducts] = useState([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -23,13 +29,19 @@ export default function ProductsPage() {
   const fetchProducts = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`${apiUrl}/api/owns/products`, {
-        headers: {
-          "Authorization": `Bearer ${token}`
+      console.log(token);
+
+      const res = await axios.post(
+        `${apiUrl}api/owns/products-list`,
+        {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
         }
-      });
-      const data = await res.json();
-      setProducts(data);
+      );
+      const data = res.data;
+      console.log(data);
+      // setProducts(data);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
