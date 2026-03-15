@@ -4,12 +4,16 @@ import { useState, useEffect } from "react";
 import OwnerLayout from "../../layouts/page";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 export default function OwnerDashboard() {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+  const apiUrl = `${baseUrl}api/owns/shops`;
   const [shops, setShops] = useState([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const [ownerId, setOwnerId] = useState(null);
+
 
   // Get ownerId from localStorage
   useEffect(() => {
@@ -22,11 +26,20 @@ export default function OwnerDashboard() {
   // Fetch shops whenever ownerId is ready
   useEffect(() => {
     if (!ownerId) return;
+    const token = localStorage.getItem("token");
+    console.log(token);
 
     const fetchShops = async () => {
       try {
-        const res = await fetch(`http://127.0.0.1:5000/api/shop/owner/${ownerId}`);
-        const data = await res.json(); // data is an array
+        // use to get the shops by login user access_token
+        const res = await axios.get(`${apiUrl}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = res.data;
+        console.log(data);
         setShops(data || []);
       } catch (error) {
         console.error("Failed to fetch shops", error);
@@ -39,6 +52,7 @@ export default function OwnerDashboard() {
   }, [ownerId]);
 
   const handleShopClick = (shop) => {
+    console.log(shop);
     if (shop.status_id === 2) {
       router.push(`/owner/shop/${shop.id}`);
     } else {
@@ -59,17 +73,14 @@ export default function OwnerDashboard() {
 
   return (
     <OwnerLayout showSidebar={false}>
-      <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-start gap-8 p-6">
+      <div className="min-h-screen bg-gray-100 flex flex-col justify-start gap-8 p-6">
         {/* Header with button on right */}
-        <div className="w-full flex justify-between items-center">
-          <h1 className="text-xl font-bold text-black">
-            Hi, Owner — Welcome to our POS System
-          </h1>
+        <div className="w-full">
           <button
             onClick={() => router.push("/components/owner/views/addShop")}
-            className="px-5 py-2 bg-green-700 text-white font-medium rounded-lg shadow hover:bg-green-800 transition-all"
+            className="px-5 py-2 bg-green-700 text-white font-medium rounded-lg shadow hover:bg-green-800 transition-all float-right"
           >
-            ➕ Add New Shop
+            ➕ Add Shop
           </button>
         </div>
 

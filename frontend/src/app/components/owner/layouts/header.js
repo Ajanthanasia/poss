@@ -42,13 +42,6 @@ export default function OwnerHeader() {
                     </a>
                 </div>
 
-                {/* Desktop nav links */}
-                <div className="hidden lg:flex lg:gap-x-12">
-                    <a href="#" className="text-sm/6 font-semibold text-white hover:text-indigo-400 transition">Features</a>
-                    <a href="#" className="text-sm/6 font-semibold text-white hover:text-indigo-400 transition">Marketplace</a>
-                    <a href="#" className="text-sm/6 font-semibold text-white hover:text-indigo-400 transition">Company</a>
-                </div>
-
                 {/* Right-side buttons */}
                 <div className="hidden lg:flex lg:flex-1 lg:justify-end items-center gap-6 relative">
                     {/* Profile Dropdown */}
@@ -82,7 +75,7 @@ export default function OwnerHeader() {
                         className="text-sm/6 font-semibold text-white cursor-pointer hover:text-indigo-400 transition"
                         onClick={logout}
                     >
-                        Log out &rarr;
+                        Log out
                     </div>
                 </div>
             </nav>

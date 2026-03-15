@@ -3,6 +3,7 @@ from app.database import SessionLocal
 from app.models.shop import Shop
 from app.models.user import User
 import uuid
+from flask import g
 import traceback
 
 # ✅ Fetch only users with role_id = 2
@@ -55,18 +56,10 @@ def add_shop():
 def list_shops():
     db = SessionLocal()
     try:
-        shops = db.query(Shop).join(User).all()
-        result = []
-        for shop in shops:
-            result.append({
-                "id": shop.id,
-                "name": shop.name,
-                "owner": shop.owner.name if shop.owner else None,
-                "email": shop.email,
-                "location": f"{shop.address}, {shop.city}, {shop.district}, {shop.country}",
-                "status_id": shop.status_id  # ✅ Include this for frontend modal
-            })
-        return jsonify(result), 200
+        # get the shops by login user id
+        authUserId = g.auth_user.id
+        shops = db.query(Shop).join(User).filter(Shop.owner_id == authUserId).all()
+        return [shop.to_dict() for shop in shops]
     except Exception as e:
         print("❌ Error fetching shop list:", e)
         traceback.print_exc()

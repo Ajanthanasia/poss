@@ -10,6 +10,8 @@ from app.controllers.employee_controller import (
 )
 import traceback
 
+# don't use this we need to delete it in future
+
 employeeRoute = Blueprint('employee', __name__, url_prefix='/api/employees')
 
 
