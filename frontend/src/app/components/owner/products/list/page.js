@@ -33,6 +33,7 @@ export default function ProductsPage() {
 
       const res = await axios.post(
         `${apiUrl}api/owns/products-list`,
+        {},
         {
           headers: {
             "Authorization": `Bearer ${token}`
@@ -41,7 +42,7 @@ export default function ProductsPage() {
       );
       const data = res.data;
       console.log(data);
-      // setProducts(data);
+      setProducts(data);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
