@@ -54,7 +54,7 @@ export default function OwnerDashboard() {
   const handleShopClick = (shop) => {
     console.log(shop);
     if (shop.status_id === 2) {
-      router.push(`/components/owner/products/list?id=${shop.id}`);
+      router.push(`/components/owner/products/list?shop_id=${shop.id}`);
     } else {
       alert("This shop is not active yet.");
     }

@@ -11,7 +11,8 @@ export default function ProductsPage() {
   const searchParams = useSearchParams();
 
   // Get the id from query string
-  const shopId = searchParams.get("id");
+  const shopId = searchParams.get("shop_id");
+  console.log(shopId);
 
   const [products, setProducts] = useState([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -154,7 +155,7 @@ export default function ProductsPage() {
       <div className="min-h-screen bg-gray-100 flex flex-col items-start justify-start gap-6 p-6">
         <div className="w-full flex items-center justify-between">
           <h1 className="text-2xl font-bold text-black">Products List</h1>
-          <Link href="/components/owner/products/addProduct">
+          <Link href={`/components/owner/products/addProduct?shop_id=${shopId}`}>
             <button
               // onClick={() => setIsFormOpen(true)}
               className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
