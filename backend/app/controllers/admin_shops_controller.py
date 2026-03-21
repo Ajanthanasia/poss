@@ -15,6 +15,10 @@ def list_shops():
         per_page = int(request.args.get("per_page", 10))
 
         query = db.query(Shop)
+        
+        # add descending order by id
+        query = query.order_by(Shop.id.desc())
+        
         total = query.count()
 
         shopData = query.offset((page - 1) * per_page).limit(per_page).all()

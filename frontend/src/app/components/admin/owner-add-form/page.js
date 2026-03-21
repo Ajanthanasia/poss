@@ -25,6 +25,10 @@ export default function OwnerAddForm() {
             setErrorMsg("Please fill all required fields.")
             return
         }
+        if (contact.length != 9) {
+            setErrorMsg("Contact number should be 9 digits long (excluding country code).");
+            return false;
+        }
 
         try {
             const token = localStorage.getItem("token")
