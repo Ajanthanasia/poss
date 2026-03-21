@@ -5,7 +5,8 @@ import { UserGroupIcon, CubeIcon } from '@heroicons/react/24/outline';
 
 export default function OwnerAsideBar() {
     return (
-        <div className="h-screen bg-gray-800 text-white flex flex-col p-4">
+        <div className="h-screen bg-gray-900 text-white flex flex-col p-4">
+
             <Link href="/components/owner/views/dashboard">
                 <h1 className="text-2xl font-bold mb-4">Home</h1>
             </Link>
