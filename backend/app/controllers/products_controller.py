@@ -11,7 +11,7 @@ def create_product():
         description=data.get('description'),
         price=data.get('price'),
         qty=data.get('qty'),
-        status_id=data.get('status_id'),
+        status_id=2,
         creator_id=g.auth_user.id
     )
     db.session.add(product)
