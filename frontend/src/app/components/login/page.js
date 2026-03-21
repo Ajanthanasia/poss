@@ -111,6 +111,7 @@ export default function LoginPage() {
                                 required
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
+                                placeholder="Enter the email"
                                 className="block w-full rounded-md bg-white/5 px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm"
                             />
                         </div>
@@ -132,6 +133,7 @@ export default function LoginPage() {
                                 required
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
+                                placeholder="Enter the password"
                                 className="block w-full rounded-md bg-white/5 px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm"
                             />
                         </div>
@@ -149,15 +151,6 @@ export default function LoginPage() {
                     </div>
                 </form>
 
-                <p className="mt-6 text-center text-sm text-gray-400">
-                    Not a member?{' '}
-                    <a
-                        href="#"
-                        className="font-semibold text-indigo-400 hover:text-indigo-300"
-                    >
-                        Start a 14 day free trial
-                    </a>
-                </p>
             </div>
         </div>
     );
