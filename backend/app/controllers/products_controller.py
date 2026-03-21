@@ -19,7 +19,9 @@ def create_product():
     return jsonify(product.serialize()), 201
 
 def get_products():
-    products = Product.query.all()
+    data = request.get_json()
+    shopId = data.get('shop_id')
+    products = Product.query.filter_by(shop_id=shopId).all()
     return jsonify([p.serialize() for p in products])
 
 def get_product(product_id):

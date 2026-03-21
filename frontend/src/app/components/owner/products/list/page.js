@@ -18,7 +18,7 @@ export default function ProductsPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [form, setForm] = useState({
-    shop_id: 1,
+    shop_id: shopId,
     name: "",
     unit_type: "piece",
     description: "",
@@ -34,7 +34,9 @@ export default function ProductsPage() {
 
       const res = await axios.post(
         `${apiUrl}api/owns/products-list`,
-        {},
+        {
+          shop_id: shopId
+        },
         {
           headers: {
             "Authorization": `Bearer ${token}`
