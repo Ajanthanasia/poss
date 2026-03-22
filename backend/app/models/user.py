@@ -10,6 +10,7 @@ class User(db.Model):
     role_id = db.Column(db.Integer)
     api_token = db.Column(db.String(255))
     status_id = db.Column(db.Integer)
+    last_login_at = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, default=db.func.now())
 
     profile = db.relationship(

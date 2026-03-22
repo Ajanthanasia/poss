@@ -4,6 +4,7 @@ from app.models.user import User
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token
 from app.services.jwt import generate_jwt
+from datetime import datetime
 
 
 # -------------------------------
@@ -115,6 +116,8 @@ def login_user(data):
         if not password_valid:
             return jsonify({'status': False, 'message': 'Invalid password'}), 401
 
+        currentTime = datetime.now()
+        user.last_login_at = currentTime
         # ✅ Create JWT token using your generate_jwt service
         access_token = generate_jwt(user.id, user.name)
         user.api_token = access_token
