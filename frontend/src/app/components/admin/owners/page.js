@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminHeader from '../header/page';
 import AdminSidebar from '../sidebar/page';
-import { EyeIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { EyeIcon, PencilSquareIcon, TrashIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
 export default function OwnersListPage() {
   const router = useRouter()
@@ -20,6 +20,7 @@ export default function OwnersListPage() {
   const [page, setPage] = useState(1)
   const [pages, setPages] = useState(1)
   const [total, setTotal] = useState(0)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
 
   const handleSearch = async (pageNum = 1) => {
     try {
@@ -115,7 +116,7 @@ export default function OwnersListPage() {
 
   return (
     <div className="flex min-h-screen bg-gray-100 font-sans text-sm">
-      <AdminSidebar />
+      <AdminSidebar collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} />
       <div className="flex-1 flex flex-col">
         <AdminHeader />
         <main className="flex-1 p-6">
@@ -209,29 +210,30 @@ export default function OwnersListPage() {
                   ))}
                 </tbody>
               </table>
-              <div className="flex justify-between items-center mt-4">
-                <span className="inline-flex items-center px-2 py-1 ring-1 ring-inset ring-brand-subtle text-fg-brand-strong text-black text-sm font-medium rounded bg-brand-softer">
-                  Page {page} of {pages} (Total : {total})
-                </span>
-              </div>
-              <div className="flex justify-between items-center mt-4">
-                <button
-                  disabled={page === 1}
-                  onClick={() => setPage(page - 1)}
-                  className="px-3 py-1 bg-gray-600 text-white rounded disabled:opacity-50"
-                >
-                  Prev
-                </button>
-                <button
-                  disabled={page === pages}
-                  onClick={() => setPage(page + 1)}
-                  className="px-3 py-1 bg-gray-600 text-white rounded disabled:opacity-50"
-                >
-                  Next
-                </button>
-              </div>
+              {/* Spacer so table content doesn't hide behind fixed pagination */}
+              <div className="h-16"></div>
             </div>
           )}
+          {/* Fixed Bottom Pagination */}
+          <div className={`fixed bottom-0 right-0 bg-white border-t shadow-md py-3 px-6 flex justify-center items-center gap-4 z-40 transition-all duration-300 ${sidebarCollapsed ? 'left-16' : 'left-64'}`}>
+            <button
+              disabled={page === 1}
+              onClick={() => setPage(page - 1)}
+              className="p-2 rounded-full bg-gray-600 text-white hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition"
+            >
+              <ChevronLeftIcon className="w-5 h-5" />
+            </button>
+            <span className="text-sm font-medium text-gray-700">
+              Page {page} of {pages}
+            </span>
+            <button
+              disabled={page === pages}
+              onClick={() => setPage(page + 1)}
+              className="p-2 rounded-full bg-gray-600 text-white hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition"
+            >
+              <ChevronRightIcon className="w-5 h-5" />
+            </button>
+          </div>
         </main>
 
         {/* View Modal */}
