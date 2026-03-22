@@ -11,7 +11,6 @@ export default function OwnerHeader() {
 
     // Close when clicking outside
     useEffect(() => {
-        console.log('uil');
         function handleClickOutside(event) {
             console.log(event);
             if (

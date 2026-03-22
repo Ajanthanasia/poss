@@ -26,6 +26,11 @@ export default function OwnerAsideBar() {
                     <CubeIcon className="h-5 w-5" />
                     <span>Products</span>
                 </Link>
+
+                <Link href={`/components/owner/make-sales?shop_id=${shopId}`} className="w-full flex items-center gap-3 hover:bg-gray-700 p-2 rounded cursor-pointer">
+                    <CubeIcon className="h-5 w-5" />
+                    <span>Make Sale</span>
+                </Link>
             </div>
         </div>
     );
