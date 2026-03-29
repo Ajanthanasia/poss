@@ -16,10 +16,10 @@ export default function OwnerAsideBar() {
 
             <div className="space-y-4">
                 {/* Employees */}
-                <Link href={`/components/owner/employees?shop_id=${shopId}`} className="w-full flex items-center gap-3 hover:bg-gray-700 p-2 rounded cursor-pointer">
+                {/* <Link href={`/components/owner/employees?shop_id=${shopId}`} className="w-full flex items-center gap-3 hover:bg-gray-700 p-2 rounded cursor-pointer">
                     <UserGroupIcon className="h-5 w-5" />
                     <span>Employees</span>
-                </Link>
+                </Link> */}
 
                 {/* Products - Goes to List */}
                 <Link href={`/components/owner/products/list?shop_id=${shopId}`} className="w-full flex items-center gap-3 hover:bg-gray-700 p-2 rounded cursor-pointer">
