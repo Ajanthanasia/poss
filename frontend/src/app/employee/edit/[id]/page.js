@@ -67,6 +67,7 @@ export default function EditEmployeePage() {
   }, [employeeId])
 
   if (loading) return <p className="p-6 text-center">Loading...</p>
+  
   if (error) return <p className="p-6 text-center text-red-500">{error}</p>
 
   return (
